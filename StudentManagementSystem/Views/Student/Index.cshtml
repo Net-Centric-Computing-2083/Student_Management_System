@@ -1,0 +1,183 @@
+@model IEnumerable<StudentManagementSystem.Models.Student>
+
+@{
+    ViewData["Title"] = "Student Management";
+}
+
+<div class="student-page">
+
+    <div class="student-header">
+        <div>
+            <h1>Student Management</h1>
+            <p>Manage student registration and information</p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary add-student">
+            <span>+</span> Add Student
+        </a>
+    </div>
+
+    <div class="student-card">
+
+        <div class="card-title">
+            <div>
+                <h2>Students</h2>
+                <p>List of registered students</p>
+            </div>
+
+            <div class="student-tools">
+
+                <form asp-action="Index" method="get" class="search-form">
+                    <input type="text"
+                           name="searchString"
+                           value="@Context.Request.Query["searchString"]"
+                           placeholder="Search by name or email..." />
+
+                    <button type="submit" class="search-btn">
+                        🔎 Search
+                    </button>
+
+                    <a asp-action="Index" class="clear-btn">
+                        Clear
+                    </a>
+                </form>
+
+                <div>
+                    <div class="student-count">
+                        @Model.Count() Students
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Context.Request.Query["searchString"]))
+                    {
+                        <small class="search-result-text">
+                            Search results for:
+                            <strong>@Context.Request.Query["searchString"]</strong>
+                        </small>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h3>No Students Found</h3>
+
+                @if (!string.IsNullOrWhiteSpace(Context.Request.Query["searchString"]))
+                {
+                    <p>
+                        No students matched
+                        "<strong>@Context.Request.Query["searchString"]</strong>".
+                    </p>
+
+                    <a asp-action="Index" class="btn btn-primary">
+                        Clear Search
+                    </a>
+                }
+                else
+                {
+                    <p>Start by adding a new student.</p>
+
+                    <a asp-action="Create" class="btn btn-primary">
+                        Add First Student
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="student-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Gender</th>
+                            <th>Date of Birth</th>
+                            <th>Department</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="student-id">
+                                        #@item.StudentId
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="student-info">
+                                        <div class="avatar">
+                                            @item.Name.Substring(0, 1).ToUpper()
+                                        </div>
+
+                                        <div>
+                                            <strong>@item.Name</strong>
+                                            <small>Student</small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>@item.Email</td>
+
+                                <td>@item.Phone</td>
+
+                                <td>
+                                    <span class="gender-badge">
+                                        @item.Gender
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @item.DateOfBirth.ToString("MMM dd, yyyy")
+                                </td>
+
+                                <td>
+                                    <span class="department-badge">
+                                        @item.DepartmentId
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.StudentId"
+                                           class="action-btn view-btn"
+                                           title="View Details">
+                                            👁
+                                        </a>
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.StudentId"
+                                           class="action-btn edit-btn"
+                                           title="Edit Student">
+                                            ✎
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.StudentId"
+                                           class="action-btn delete-btn"
+                                           title="Delete Student">
+                                            🗑
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+    </div>
+</div>

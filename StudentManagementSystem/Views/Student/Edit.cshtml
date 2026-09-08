@@ -1,0 +1,133 @@
+@model StudentManagementSystem.Models.Student
+
+@{
+    ViewData["Title"] = "Edit Student";
+}
+
+<div class="form-page">
+
+    <div class="form-header">
+        <div>
+            <h1>Edit Student</h1>
+            <p>Update the student's information</p>
+        </div>
+
+        <a asp-action="Index" class="back-link">
+            ← Back to Students
+        </a>
+    </div>
+
+    <div class="form-card">
+
+        <div class="form-card-header">
+            <div class="form-icon">✎</div>
+            <div>
+                <h2>Student Information</h2>
+                <p>Make the necessary changes below</p>
+            </div>
+        </div>
+
+        <form asp-action="Edit">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="validation-message">
+            </div>
+
+            <input type="hidden" asp-for="StudentId" />
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label asp-for="Name">Full Name</label>
+                   <input asp-for="Name"
+       class="form-control"
+       placeholder="Enter full name"
+       maxlength="100" />
+                    <span asp-validation-for="Name"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email">Email Address</label>
+                   <input asp-for="Email"
+       class="form-control"
+       placeholder="student@example.com"
+       maxlength="150"
+       type="email" />
+                    <span asp-validation-for="Email"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Phone">Phone Number</label>
+                <input asp-for="Phone"
+       class="form-control"
+       placeholder="98XXXXXXXX"
+       maxlength="10"
+       inputmode="numeric" />
+                    <span asp-validation-for="Phone"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Gender">Gender</label>
+                    <select asp-for="Gender" class="form-control">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="Gender"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateOfBirth">Date of Birth</label>
+                    <input asp-for="DateOfBirth"
+                           type="date"
+                           class="form-control" />
+                    <span asp-validation-for="DateOfBirth"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DepartmentId">Department</label>
+                   <input asp-for="DepartmentId"
+       class="form-control"
+       placeholder="Department ID" />
+                    <span asp-validation-for="DepartmentId"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="form-group full-width">
+                    <label asp-for="Address">Address</label>
+                   <textarea asp-for="Address"
+          class="form-control"
+          rows="3"
+          maxlength="200"
+          placeholder="Enter student's address"></textarea>
+                    <span asp-validation-for="Address"
+                          class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="Index" class="btn-secondary-custom">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn-primary-custom">
+                    ✓ Update Student
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
