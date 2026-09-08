@@ -1,0 +1,159 @@
+
+@model StudentManagementSystem.Models.Student
+
+@{
+    ViewData["Title"] = "Student Profile";
+}
+
+<div class="profile-page">
+
+    <!-- Header -->
+    <div class="profile-header">
+        <div>
+            <h1>Student Profile</h1>
+            <p>View complete student information</p>
+        </div>
+
+        <a asp-action="Index" class="profile-back">
+            ← Back to Students
+        </a>
+    </div>
+
+    <!-- Profile Header Card -->
+    <div class="profile-main-card">
+
+        <div class="profile-identity">
+
+            <div class="profile-avatar">
+                @Model.Name.Substring(0, 1).ToUpper()
+            </div>
+
+            <div class="profile-identity-info">
+                <h2>@Model.Name.ToUpper()</h2>
+                <p>Student ID: #@Model.StudentId</p>
+                <span class="profile-status">Active Student</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- About Section -->
+    <div class="profile-section-card">
+
+        <div class="profile-section-title">
+            <div class="section-icon">👤</div>
+            <div>
+                <h3>About</h3>
+                <p>Basic student information</p>
+            </div>
+        </div>
+
+        <div class="profile-info-grid">
+
+            <div class="profile-info-item">
+                <span>Full Name</span>
+                <strong>@Model.Name</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Student ID</span>
+                <strong>#@Model.StudentId</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Date of Birth</span>
+                <strong>@Model.DateOfBirth.ToString("dd MMMM yyyy")</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Gender</span>
+                <strong>@Model.Gender</strong>
+            </div>
+
+            <div class="profile-info-item profile-full-width">
+                <span>Address</span>
+                <strong>@Model.Address</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Academic Details -->
+    <div class="profile-section-card">
+
+        <div class="profile-section-title">
+            <div class="section-icon">🎓</div>
+            <div>
+                <h3>Academic Details</h3>
+                <p>Student's academic information</p>
+            </div>
+        </div>
+
+        <div class="profile-info-grid">
+
+            <div class="profile-info-item">
+                <span>Student ID</span>
+                <strong>#@Model.StudentId</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Department</span>
+                <strong>Department @Model.DepartmentId</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Student Status</span>
+                <strong>Active</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Contact Information -->
+    <div class="profile-section-card">
+
+        <div class="profile-section-title">
+            <div class="section-icon">📞</div>
+            <div>
+                <h3>Contact Information</h3>
+                <p>Student's contact details</p>
+            </div>
+        </div>
+
+        <div class="profile-info-grid">
+
+            <div class="profile-info-item">
+                <span>Email Address</span>
+                <strong>@Model.Email</strong>
+            </div>
+
+            <div class="profile-info-item">
+                <span>Mobile Number</span>
+                <strong>@Model.Phone</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="profile-actions">
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.StudentId"
+           class="profile-edit-btn">
+            ✎ Edit Student
+        </a>
+
+        <a asp-action="Delete"
+           asp-route-id="@Model.StudentId"
+           class="profile-delete-btn">
+            🗑 Delete Student
+        </a>
+
+    </div>
+
+</div>

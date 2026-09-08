@@ -1,25 +1,37 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
-using System.Diagnostics;
 
 namespace StudentManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        private readonly ApplicationDbContext _context;
+
+        public HomeController(ApplicationDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var dashboard = new DashboardViewModel
+            {
+                TotalStudents = await _context.Students.CountAsync(),
+
+                RecentStudents = await _context.Students
+                    .OrderByDescending(s => s.StudentId)
+                    .Take(5)
+                    .ToListAsync()
+            };
+
+            return View(dashboard);
         }
 
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

@@ -1,8 +1,157 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model StudentManagementSystem.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="dashboard-page">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <div>
+            <h1>Student Management System</h1>
+            <p>Welcome to your student management dashboard.</p>
+        </div>
+
+        <a asp-controller="Student"
+           asp-action="Create"
+           class="dashboard-add-btn">
+            + Add Student
+        </a>
+    </div>
+
+    <!-- Statistics -->
+    <div class="dashboard-stats">
+
+        <div class="stat-card">
+            <div class="stat-icon">👨‍🎓</div>
+
+            <div>
+                <span>Total Students</span>
+                <h2>@Model.TotalStudents</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+
+            <div>
+                <span>Student Module</span>
+                <h2>Active</h2>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🔎</div>
+
+            <div>
+                <span>Student Search</span>
+                <h2>Available</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-header">
+            <div>
+                <h2>Quick Actions</h2>
+                <p>Common student management operations</p>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+
+            <a asp-controller="Student"
+               asp-action="Create"
+               class="quick-action">
+                <span>➕</span>
+                <div>
+                    <strong>Add Student</strong>
+                    <small>Register a new student</small>
+                </div>
+            </a>
+
+            <a asp-controller="Student"
+               asp-action="Index"
+               class="quick-action">
+                <span>👨‍🎓</span>
+                <div>
+                    <strong>View Students</strong>
+                    <small>Manage registered students</small>
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- Recent Students -->
+    <div class="dashboard-card">
+
+        <div class="dashboard-card-header">
+            <div>
+                <h2>Recent Students</h2>
+                <p>Recently registered students</p>
+            </div>
+
+            <a asp-controller="Student"
+               asp-action="Index"
+               class="view-all-link">
+                View All →
+            </a>
+        </div>
+
+        @if (!Model.RecentStudents.Any())
+        {
+            <div class="dashboard-empty">
+                <div>👨‍🎓</div>
+                <h3>No Students Yet</h3>
+                <p>Start by registering your first student.</p>
+
+                <a asp-controller="Student"
+                   asp-action="Create"
+                   class="dashboard-add-btn">
+                    Add Student
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="recent-students-list">
+
+                @foreach (var student in Model.RecentStudents)
+                {
+                    <div class="recent-student">
+
+                        <div class="recent-avatar">
+                            @student.Name.Substring(0, 1).ToUpper()
+                        </div>
+
+                        <div class="recent-info">
+                            <strong>@student.Name</strong>
+                            <span>@student.Email</span>
+                        </div>
+
+                        <div class="recent-id">
+                            #@student.StudentId
+                        </div>
+
+                        <a asp-controller="Student"
+                           asp-action="Details"
+                           asp-route-id="@student.StudentId"
+                           class="recent-view">
+                            View
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+        }
+
+    </div>
+
 </div>
