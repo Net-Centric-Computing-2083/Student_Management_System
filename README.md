@@ -213,10 +213,43 @@ F5
 * Navigation
 * SQL Server & EF Core setup
 
+## Department and Course Management
+
+### Department Management
+
+* Added Department CRUD operations.
+* Added department name and description fields.
+* Added validation for department information.
+* Prevented duplicate department names.
+* Duplicate checking is case-insensitive.
+* Prevented deletion of departments that have students or courses assigned to them.
+* Added Department Details showing associated students and courses.
+
+### Course Management
+
+* Added Course CRUD operations.
+* Added Course Name, Course Code, Credit Hours, and Department fields.
+* Added Department dropdown for course creation and editing.
+* Added validation for course information.
+* Prevented duplicate Course Names.
+* Prevented duplicate Course Codes.
+* Duplicate checking is case-insensitive.
+* Added Course Details displaying the associated department.
+
+### Database Changes
+
+* Added `Department` and `Course` entities.
+* Added relationships between Department and Student.
+* Added relationship between Department and Course.
+* Added EF Core migration for Department and Course management.
+
+### Member 2
+
+**Modules:** Department Management and Course Management
+
+
 ### In Progress
 
-* Department Management
-* Course Management
 * Enrollment
 * Attendance
 * Results
