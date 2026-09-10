@@ -20,7 +20,7 @@ namespace StudentManagementSystem.Data
 
             // Department → Students (One-to-Many)
             modelBuilder.Entity<Student>()
-                .HasOne<Department>()
+                .HasOne(s => s.Department)
                 .WithMany(d => d.Students)
                 .HasForeignKey(s => s.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);

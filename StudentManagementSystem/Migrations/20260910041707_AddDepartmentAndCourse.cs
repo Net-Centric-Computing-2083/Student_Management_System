@@ -28,40 +28,92 @@ namespace StudentManagementSystem.Migrations
                 oldClrType: typeof(string),
                 oldType: "nvarchar(max)");
 
-            migrationBuilder.AddColumn<int>(
-                name: "DepartmentId1",
-                table: "Students",
-                type: "int",
-                nullable: true);
-
+            // Create Departments table
             migrationBuilder.CreateTable(
                 name: "Departments",
                 columns: table => new
                 {
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+                    DepartmentId = table.Column<int>(
+                        type: "int",
+                        nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DepartmentName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
+
+                    DepartmentName = table.Column<string>(
+                        type: "nvarchar(100)",
+                        maxLength: 100,
+                        nullable: false),
+
+                    Description = table.Column<string>(
+                        type: "nvarchar(500)",
+                        maxLength: 500,
+                        nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Departments", x => x.DepartmentId);
+                    table.PrimaryKey(
+                        "PK_Departments",
+                        x => x.DepartmentId);
                 });
 
+            // Add sample departments
+            migrationBuilder.InsertData(
+                table: "Departments",
+                columns: new[] { "DepartmentName", "Description" },
+                values: new object[,]
+                {
+                    {
+                        "Computer Science",
+                        "Computer Science Department"
+                    },
+                    {
+                        "Information Technology",
+                        "Information Technology Department"
+                    },
+                    {
+                        "Software Engineering",
+                        "Software Engineering Department"
+                    }
+                });
+
+            // Change existing dummy DepartmentId values
+            // to DepartmentId = 1 (Computer Science)
+            migrationBuilder.Sql(
+                "UPDATE Students SET DepartmentId = 1");
+
+            // Create Courses table
             migrationBuilder.CreateTable(
                 name: "Courses",
                 columns: table => new
                 {
-                    CourseId = table.Column<int>(type: "int", nullable: false)
+                    CourseId = table.Column<int>(
+                        type: "int",
+                        nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CourseName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CourseCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreditHours = table.Column<int>(type: "int", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+
+                    CourseName = table.Column<string>(
+                        type: "nvarchar(100)",
+                        maxLength: 100,
+                        nullable: false),
+
+                    CourseCode = table.Column<string>(
+                        type: "nvarchar(20)",
+                        maxLength: 20,
+                        nullable: false),
+
+                    CreditHours = table.Column<int>(
+                        type: "int",
+                        nullable: false),
+
+                    DepartmentId = table.Column<int>(
+                        type: "int",
+                        nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Courses", x => x.CourseId);
+                    table.PrimaryKey(
+                        "PK_Courses",
+                        x => x.CourseId);
+
                     table.ForeignKey(
                         name: "FK_Courses_Departments_DepartmentId",
                         column: x => x.DepartmentId,
@@ -70,21 +122,18 @@ namespace StudentManagementSystem.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            // Create indexes
             migrationBuilder.CreateIndex(
                 name: "IX_Students_DepartmentId",
                 table: "Students",
                 column: "DepartmentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Students_DepartmentId1",
-                table: "Students",
-                column: "DepartmentId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Courses_DepartmentId",
                 table: "Courses",
                 column: "DepartmentId");
 
+            // Create Student → Department foreign key
             migrationBuilder.AddForeignKey(
                 name: "FK_Students_Departments_DepartmentId",
                 table: "Students",
@@ -92,13 +141,6 @@ namespace StudentManagementSystem.Migrations
                 principalTable: "Departments",
                 principalColumn: "DepartmentId",
                 onDelete: ReferentialAction.Restrict);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Students_Departments_DepartmentId1",
-                table: "Students",
-                column: "DepartmentId1",
-                principalTable: "Departments",
-                principalColumn: "DepartmentId");
         }
 
         /// <inheritdoc />
@@ -106,10 +148,6 @@ namespace StudentManagementSystem.Migrations
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Students_Departments_DepartmentId",
-                table: "Students");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Students_Departments_DepartmentId1",
                 table: "Students");
 
             migrationBuilder.DropTable(
@@ -120,14 +158,6 @@ namespace StudentManagementSystem.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_Students_DepartmentId",
-                table: "Students");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Students_DepartmentId1",
-                table: "Students");
-
-            migrationBuilder.DropColumn(
-                name: "DepartmentId1",
                 table: "Students");
 
             migrationBuilder.AlterColumn<string>(
