@@ -61,6 +61,7 @@ namespace StudentManagementSystem.Models
         [Required(ErrorMessage = "Department is required.")]
         [Display(Name = "Department")]
         public int DepartmentId { get; set; }
+        public Department? Department { get; set; }
     }
 }
 

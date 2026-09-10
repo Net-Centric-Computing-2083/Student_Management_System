@@ -1,0 +1,51 @@
+@model StudentManagementSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Delete Department";
+}
+
+<h1>Delete Department</h1>
+
+@if (TempData["DeleteError"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["DeleteError"]
+    </div>
+}
+
+<h3>Are you sure you want to delete this department?</h3>
+
+<hr />
+
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Department Name
+        </dt>
+        <dd class="col-sm-9">
+            @Model.DepartmentName
+        </dd>
+
+        <dt class="col-sm-3">
+            Description
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Description
+        </dd>
+
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="DepartmentId" />
+
+        <input type="submit"
+               value="Delete"
+               class="btn btn-danger" />
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Back to List
+        </a>
+    </form>
+</div>
