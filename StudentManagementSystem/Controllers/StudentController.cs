@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
@@ -29,7 +30,11 @@ public class StudentController : Controller
                 s.StudentId.ToString().Contains(searchString));
         }
 
-        return View(await students.ToListAsync());
+        var studentList = await students
+            .Include(s => s.Department)
+            .ToListAsync();
+
+        return View(studentList);
     }
 
     // GET: Student/Details/5
@@ -41,6 +46,7 @@ public class StudentController : Controller
         }
 
         var student = await _context.Students
+            .Include(s => s.Department)
             .FirstOrDefaultAsync(s => s.StudentId == id);
 
         if (student == null)
@@ -54,6 +60,11 @@ public class StudentController : Controller
     // GET: Student/Create
     public IActionResult Create()
     {
+        ViewData["DepartmentId"] = new SelectList(
+            _context.Departments,
+            "DepartmentId",
+            "DepartmentName");
+
         return View();
     }
 
@@ -66,7 +77,6 @@ public class StudentController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Check whether email already exists
             bool emailExists = await _context.Students
                 .AnyAsync(s => s.Email.ToLower() == student.Email.ToLower());
 
@@ -76,6 +86,12 @@ public class StudentController : Controller
                     "Email",
                     "A student with this email already exists.");
 
+                ViewData["DepartmentId"] = new SelectList(
+                    _context.Departments,
+                    "DepartmentId",
+                    "DepartmentName",
+                    student.DepartmentId);
+
                 return View(student);
             }
 
@@ -84,6 +100,12 @@ public class StudentController : Controller
 
             return RedirectToAction(nameof(Index));
         }
+
+        ViewData["DepartmentId"] = new SelectList(
+            _context.Departments,
+            "DepartmentId",
+            "DepartmentName",
+            student.DepartmentId);
 
         return View(student);
     }
@@ -103,6 +125,12 @@ public class StudentController : Controller
             return NotFound();
         }
 
+        ViewData["DepartmentId"] = new SelectList(
+            _context.Departments,
+            "DepartmentId",
+            "DepartmentName",
+            student.DepartmentId);
+
         return View(student);
     }
 
@@ -114,7 +142,6 @@ public class StudentController : Controller
         [Bind("StudentId,Name,Email,Phone,Address,Gender,DateOfBirth,DepartmentId")]
         Student student)
     {
-        // Make sure the route ID matches the student ID
         if (id == null || id != student.StudentId)
         {
             return NotFound();
@@ -122,7 +149,6 @@ public class StudentController : Controller
 
         if (ModelState.IsValid)
         {
-            // Check whether another student already uses this email
             bool emailExists = await _context.Students
                 .AnyAsync(s =>
                     s.Email.ToLower() == student.Email.ToLower() &&
@@ -133,6 +159,12 @@ public class StudentController : Controller
                 ModelState.AddModelError(
                     "Email",
                     "A student with this email already exists.");
+
+                ViewData["DepartmentId"] = new SelectList(
+                    _context.Departments,
+                    "DepartmentId",
+                    "DepartmentName",
+                    student.DepartmentId);
 
                 return View(student);
             }
@@ -155,6 +187,12 @@ public class StudentController : Controller
             return RedirectToAction(nameof(Index));
         }
 
+        ViewData["DepartmentId"] = new SelectList(
+            _context.Departments,
+            "DepartmentId",
+            "DepartmentName",
+            student.DepartmentId);
+
         return View(student);
     }
 
@@ -167,6 +205,7 @@ public class StudentController : Controller
         }
 
         var student = await _context.Students
+            .Include(s => s.Department)
             .FirstOrDefaultAsync(s => s.StudentId == id);
 
         if (student == null)

@@ -1,0 +1,140 @@
+@model StudentManagementSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Department Details";
+}
+
+<h1>Department Details</h1>
+
+<hr />
+
+<div>
+    <dl class="row">
+
+        <dt class="col-sm-3">
+            Department Name
+        </dt>
+        <dd class="col-sm-9">
+            @Model.DepartmentName
+        </dd>
+
+        <dt class="col-sm-3">
+            Description
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Description
+        </dd>
+
+        <dt class="col-sm-3">
+            Total Students
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Students.Count
+        </dd>
+
+        <dt class="col-sm-3">
+            Total Courses
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Courses.Count
+        </dd>
+
+    </dl>
+</div>
+
+<hr />
+
+<h4>Students</h4>
+
+@if (Model.Students.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var student in Model.Students)
+            {
+                <tr>
+                    <td>
+                        @student.StudentId
+                    </td>
+
+                    <td>
+                        @student.Name
+                    </td>
+
+                    <td>
+                        @student.Email
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">
+        No students are assigned to this department.
+    </p>
+}
+
+<h4 class="mt-4">Courses</h4>
+
+@if (Model.Courses.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Course Name</th>
+                <th>Course Code</th>
+                <th>Credit Hours</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var course in Model.Courses)
+            {
+                <tr>
+                    <td>
+                        @course.CourseName
+                    </td>
+
+                    <td>
+                        @course.CourseCode
+                    </td>
+
+                    <td>
+                        @course.CreditHours
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">
+        No courses are assigned to this department.
+    </p>
+}
+
+<div class="mt-3">
+
+    <a asp-action="Edit"
+       asp-route-id="@Model.DepartmentId"
+       class="btn btn-warning">
+        Edit
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
+
+</div>

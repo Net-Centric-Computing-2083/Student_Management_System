@@ -1,183 +1,130 @@
 @model IEnumerable<StudentManagementSystem.Models.Student>
 
 @{
-    ViewData["Title"] = "Student Management";
+    ViewData["Title"] = "Students";
 }
 
-<div class="student-page">
+<h1>Students</h1>
 
-    <div class="student-header">
-        <div>
-            <h1>Student Management</h1>
-            <p>Manage student registration and information</p>
-        </div>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Student</a>
+</p>
 
-        <a asp-action="Create" class="btn btn-primary add-student">
-            <span>+</span> Add Student
+<form asp-action="Index" method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text"
+               name="searchString"
+               class="form-control"
+               placeholder="Search by name, email, phone or ID..."
+               value="@Context.Request.Query["searchString"]" />
+
+        <button type="submit" class="btn btn-primary">
+            Search
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Clear
         </a>
     </div>
+</form>
 
-    <div class="student-card">
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.StudentId)
+            </th>
 
-        <div class="card-title">
-            <div>
-                <h2>Students</h2>
-                <p>List of registered students</p>
-            </div>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
 
-            <div class="student-tools">
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
 
-                <form asp-action="Index" method="get" class="search-form">
-                    <input type="text"
-                           name="searchString"
-                           value="@Context.Request.Query["searchString"]"
-                           placeholder="Search by name or email..." />
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
 
-                    <button type="submit" class="search-btn">
-                        🔎 Search
-                    </button>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
 
-                    <a asp-action="Index" class="clear-btn">
-                        Clear
-                    </a>
-                </form>
+            <th>
+                @Html.DisplayNameFor(model => model.Gender)
+            </th>
 
-                <div>
-                    <div class="student-count">
-                        @Model.Count() Students
-                    </div>
+            <th>
+                @Html.DisplayNameFor(model => model.DateOfBirth)
+            </th>
 
-                    @if (!string.IsNullOrWhiteSpace(Context.Request.Query["searchString"]))
-                    {
-                        <small class="search-result-text">
-                            Search results for:
-                            <strong>@Context.Request.Query["searchString"]</strong>
-                        </small>
-                    }
-                </div>
+            <th>
+                Department
+            </th>
 
-            </div>
-        </div>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
 
-        @if (!Model.Any())
+    <tbody>
+        @foreach (var item in Model)
         {
-            <div class="empty-state">
-                <div class="empty-icon">🔍</div>
-                <h3>No Students Found</h3>
+            <tr>
+                <td>
+                    @item.StudentId
+                </td>
 
-                @if (!string.IsNullOrWhiteSpace(Context.Request.Query["searchString"]))
-                {
-                    <p>
-                        No students matched
-                        "<strong>@Context.Request.Query["searchString"]</strong>".
-                    </p>
+                <td>
+                    @item.Name
+                </td>
 
-                    <a asp-action="Index" class="btn btn-primary">
-                        Clear Search
+                <td>
+                    @item.Email
+                </td>
+
+                <td>
+                    @item.Phone
+                </td>
+
+                <td>
+                    @item.Address
+                </td>
+
+                <td>
+                    @item.Gender
+                </td>
+
+                <td>
+                    @item.DateOfBirth.ToString("yyyy-MM-dd")
+                </td>
+
+                <td>
+                    @item.Department?.DepartmentName
+                </td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@item.StudentId"
+                       class="btn btn-sm btn-warning">
+                        Edit
                     </a>
-                }
-                else
-                {
-                    <p>Start by adding a new student.</p>
 
-                    <a asp-action="Create" class="btn btn-primary">
-                        Add First Student
+                    <a asp-action="Details"
+                       asp-route-id="@item.StudentId"
+                       class="btn btn-sm btn-info">
+                        Details
                     </a>
-                }
-            </div>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.StudentId"
+                       class="btn btn-sm btn-danger">
+                        Delete
+                    </a>
+                </td>
+            </tr>
         }
-        else
-        {
-            <div class="table-responsive">
-                <table class="student-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Student</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Gender</th>
-                            <th>Date of Birth</th>
-                            <th>Department</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>
-                                    <span class="student-id">
-                                        #@item.StudentId
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <div class="student-info">
-                                        <div class="avatar">
-                                            @item.Name.Substring(0, 1).ToUpper()
-                                        </div>
-
-                                        <div>
-                                            <strong>@item.Name</strong>
-                                            <small>Student</small>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td>@item.Email</td>
-
-                                <td>@item.Phone</td>
-
-                                <td>
-                                    <span class="gender-badge">
-                                        @item.Gender
-                                    </span>
-                                </td>
-
-                                <td>
-                                    @item.DateOfBirth.ToString("MMM dd, yyyy")
-                                </td>
-
-                                <td>
-                                    <span class="department-badge">
-                                        @item.DepartmentId
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <div class="action-buttons">
-
-                                        <a asp-action="Details"
-                                           asp-route-id="@item.StudentId"
-                                           class="action-btn view-btn"
-                                           title="View Details">
-                                            👁
-                                        </a>
-
-                                        <a asp-action="Edit"
-                                           asp-route-id="@item.StudentId"
-                                           class="action-btn edit-btn"
-                                           title="Edit Student">
-                                            ✎
-                                        </a>
-
-                                        <a asp-action="Delete"
-                                           asp-route-id="@item.StudentId"
-                                           class="action-btn delete-btn"
-                                           title="Delete Student">
-                                            🗑
-                                        </a>
-
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        }
-
-    </div>
-</div>
+    </tbody>
+</table>
