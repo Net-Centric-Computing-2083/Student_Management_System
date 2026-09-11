@@ -1,0 +1,54 @@
+﻿@model StudentManagementSystem.Models.Attendance
+
+@{
+    ViewData["Title"] = "Attendance Details";
+}
+
+<h1>Attendance Details</h1>
+
+<hr />
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Student
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Student?.Name
+    </dd>
+
+    <dt class="col-sm-3">
+        Course
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Course?.CourseName
+    </dd>
+
+    <dt class="col-sm-3">
+        Attendance Date
+    </dt>
+    <dd class="col-sm-9">
+        @Model.AttendanceDate.ToString("yyyy-MM-dd")
+    </dd>
+
+    <dt class="col-sm-3">
+        Status
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Status
+    </dd>
+
+</dl>
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.AttendanceId"
+       class="btn btn-primary">
+        Edit
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to List
+    </a>
+</div>

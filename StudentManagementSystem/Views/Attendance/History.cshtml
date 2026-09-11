@@ -1,0 +1,98 @@
+﻿@model IEnumerable<StudentManagementSystem.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance History";
+}
+
+<h1>Attendance History</h1>
+
+<hr />
+
+<div class="mb-3">
+    <a asp-action="Index" class="btn btn-primary">
+        Mark Attendance
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No attendance records have been saved yet.
+    </div>
+}
+else
+{
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-light">
+            <tr>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Attendance Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @item.Student?.Name
+                    </td>
+
+                    <td>
+                        @item.Course?.CourseName
+                    </td>
+
+                    <td>
+                        @item.AttendanceDate.ToString("yyyy-MM-dd")
+                    </td>
+
+                    <td>
+                        @if (item.Status == "Present")
+                        {
+                            <span class="badge bg-success">
+                                Present
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">
+                                Absent
+                            </span>
+                        }
+                    </td>
+
+                    <td>
+
+                        <a asp-action="Details"
+                           asp-route-id="@item.AttendanceId"
+                           class="btn btn-sm btn-info">
+                            Details
+                        </a>
+
+                        <a asp-action="Edit"
+                           asp-route-id="@item.AttendanceId"
+                           class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@item.AttendanceId"
+                           class="btn btn-sm btn-danger">
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+}

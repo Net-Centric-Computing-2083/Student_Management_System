@@ -1,0 +1,149 @@
+﻿@model StudentManagementSystem.Models.AttendanceMarkingViewModel
+
+@{
+    ViewData["Title"] = "Mark Attendance";
+}
+
+<h1>Mark Attendance</h1>
+
+<hr />
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="Index" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly"
+         class="text-danger mb-3"></div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+
+            <label asp-for="CourseId"
+                   class="form-label">
+                Course
+            </label>
+
+            <select asp-for="CourseId"
+                    class="form-control"
+                    asp-items="ViewBag.Courses">
+
+                <option value="0">
+                    -- Select Course --
+                </option>
+
+            </select>
+
+            <span asp-validation-for="CourseId"
+                  class="text-danger">
+            </span>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <label asp-for="AttendanceDate"
+                   class="form-label">
+                Attendance Date
+            </label>
+
+            <input asp-for="AttendanceDate"
+                   type="date"
+                   class="form-control" />
+
+        </div>
+
+    </div>
+
+    <h4>Student List</h4>
+
+    <p class="text-muted">
+        Tick the checkbox for students who are present.
+        Students who are not ticked will be marked absent.
+    </p>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-light">
+
+            <tr>
+                <th style="width: 10%;">
+                    #
+                </th>
+
+                <th>
+                    Student Name
+                </th>
+
+                <th style="width: 20%; text-align: center;">
+                    Present
+                </th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @for (int i = 0; i < Model.Students.Count; i++)
+            {
+                <tr>
+
+                    <td>
+                        @(i + 1)
+
+                        <input type="hidden"
+                               asp-for="Students[i].StudentId" />
+
+                        <input type="hidden"
+                               asp-for="Students[i].StudentName" />
+
+                    </td>
+
+                    <td>
+                        @Model.Students[i].StudentName
+                    </td>
+
+                    <td class="text-center">
+
+                        <input asp-for="Students[i].IsPresent"
+                               class="form-check-input"
+                               style="width: 20px; height: 20px;" />
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+    @if (Model.Students.Count > 0)
+    {
+        <button type="submit"
+                class="btn btn-primary">
+            Save Attendance
+        </button>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            No students found.
+        </div>
+    }
+
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}
