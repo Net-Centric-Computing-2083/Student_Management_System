@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Models;
 
 namespace StudentManagementSystem.Data
@@ -20,6 +21,8 @@ namespace StudentManagementSystem.Data
         public DbSet<Enrollment> Enrollments { get; set; }
 
         public DbSet<Attendance> Attendances { get; set; }
+
+        public DbSet<Result> Results { get; set; }
 
 
         protected override void OnModelCreating(
@@ -86,6 +89,39 @@ namespace StudentManagementSystem.Data
                     a.AttendanceDate
                 })
                 .IsUnique();
+
+
+            // Result → Student
+            modelBuilder.Entity<Result>()
+                .HasOne(r => r.Student)
+                .WithMany()
+                .HasForeignKey(r => r.StudentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // Result → Course
+            modelBuilder.Entity<Result>()
+                .HasOne(r => r.Course)
+                .WithMany()
+                .HasForeignKey(r => r.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // Configure Marks precision
+            // Allows values such as 75.50 and 99.99
+            modelBuilder.Entity<Result>()
+                .Property(r => r.Marks)
+                .HasPrecision(5, 2);
+
+
+            // Prevent duplicate result records
+            // Same Student + Same Course
+            modelBuilder.Entity<Result>()
+                .HasIndex(r => new
+                {
+                    r.StudentId,
+                    r.CourseId
+                });
         }
     }
 }

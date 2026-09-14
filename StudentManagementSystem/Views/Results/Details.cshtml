@@ -1,0 +1,61 @@
+﻿@model StudentManagementSystem.Models.Result
+
+@{
+    ViewData["Title"] = "Result Details";
+}
+
+<h1>Result Details</h1>
+
+<hr />
+
+<dl class="row">
+
+    <dt class="col-sm-3">
+        Student
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Student?.Name
+    </dd>
+
+    <dt class="col-sm-3">
+        Course
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Course?.CourseName
+    </dd>
+
+    <dt class="col-sm-3">
+        Marks
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Marks
+    </dd>
+
+    <dt class="col-sm-3">
+        Grade
+    </dt>
+    <dd class="col-sm-9">
+        @Model.Grade
+    </dd>
+
+    <dt class="col-sm-3">
+        Result Date
+    </dt>
+    <dd class="col-sm-9">
+        @Model.ResultDate.ToString("yyyy-MM-dd")
+    </dd>
+
+</dl>
+
+<div>
+    <a asp-action="Edit"
+       asp-route-id="@Model.ResultId"
+       class="btn btn-warning">
+        Edit
+    </a>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Back to Results
+    </a>
+</div>

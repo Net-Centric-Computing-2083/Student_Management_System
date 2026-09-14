@@ -16,23 +16,25 @@ public class StudentController : Controller
     // GET: Student
     public async Task<IActionResult> Index(string searchString)
     {
-        var students = from s in _context.Students
-                       select s;
+        var students = _context.Students
+            .Include(s => s.Department)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchString))
         {
             searchString = searchString.Trim();
 
             students = students.Where(s =>
-                s.Name.Contains(searchString) ||
-                s.Email.Contains(searchString) ||
-                s.Phone.Contains(searchString) ||
-                s.StudentId.ToString().Contains(searchString));
+                EF.Functions.Like(s.Name!, $"%{searchString}%") ||
+                EF.Functions.Like(s.Email!, $"%{searchString}%") ||
+                EF.Functions.Like(s.Phone!, $"%{searchString}%") ||
+                s.StudentId.ToString().Contains(searchString) ||
+                EF.Functions.Like(
+                    s.Department!.DepartmentName!,
+                    $"%{searchString}%"));
         }
 
-        var studentList = await students
-            .Include(s => s.Department)
-            .ToListAsync();
+        var studentList = await students.ToListAsync();
 
         return View(studentList);
     }
@@ -78,7 +80,8 @@ public class StudentController : Controller
         if (ModelState.IsValid)
         {
             bool emailExists = await _context.Students
-                .AnyAsync(s => s.Email.ToLower() == student.Email.ToLower());
+                .AnyAsync(s =>
+                    s.Email!.ToLower() == student.Email!.ToLower());
 
             if (emailExists)
             {
@@ -151,7 +154,7 @@ public class StudentController : Controller
         {
             bool emailExists = await _context.Students
                 .AnyAsync(s =>
-                    s.Email.ToLower() == student.Email.ToLower() &&
+                    s.Email!.ToLower() == student.Email!.ToLower() &&
                     s.StudentId != student.StudentId);
 
             if (emailExists)

@@ -1,0 +1,120 @@
+﻿@model StudentManagementSystem.Models.Result
+
+@{
+    ViewData["Title"] = "Edit Result";
+}
+
+<h1>Edit Result</h1>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+
+        <form asp-action="Edit" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger">
+            </div>
+
+            <input type="hidden"
+                   asp-for="ResultId" />
+
+            <div class="form-group mb-3">
+                <label asp-for="StudentId" class="control-label">
+                    Student
+                </label>
+
+                <select asp-for="StudentId"
+                        class="form-control"
+                        asp-items="ViewBag.StudentId">
+                    <option value="">-- Select Student --</option>
+                </select>
+
+                <span asp-validation-for="StudentId"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="CourseId" class="control-label">
+                    Course
+                </label>
+
+                <select asp-for="CourseId"
+                        class="form-control"
+                        asp-items="ViewBag.CourseId">
+                    <option value="">-- Select Course --</option>
+                </select>
+
+                <span asp-validation-for="CourseId"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Marks" class="control-label">
+                    Marks
+                </label>
+
+                <input asp-for="Marks"
+                       class="form-control"
+                       type="number"
+                       min="0"
+                       max="100"
+                       step="0.01" />
+
+                <span asp-validation-for="Marks"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Grade" class="control-label">
+                    Grade
+                </label>
+
+                <input asp-for="Grade"
+                       class="form-control"
+                       maxlength="2" />
+
+                <span asp-validation-for="Grade"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="ResultDate" class="control-label">
+                    Result Date
+                </label>
+
+                <input asp-for="ResultDate"
+                       class="form-control"
+                       type="date" />
+
+                <span asp-validation-for="ResultDate"
+                      class="text-danger">
+                </span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit"
+                       value="Save"
+                       class="btn btn-primary" />
+
+                <a asp-action="Index"
+                   class="btn btn-secondary">
+                    Back to Results
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,66 @@
+﻿@model IEnumerable<StudentManagementSystem.Models.Result>
+
+@{
+    ViewData["Title"] = "Results";
+}
+
+<h1>Results</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add Result</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Marks</th>
+            <th>Grade</th>
+            <th>Result Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.Student?.Name
+                </td>
+                <td>
+                    @item.Course?.CourseName
+                </td>
+                <td>
+                    @item.Marks
+                </td>
+                <td>
+                    @item.Grade
+                </td>
+                <td>
+                    @item.ResultDate.ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    <a asp-action="Details"
+                       asp-route-id="@item.ResultId"
+                       class="btn btn-info btn-sm">
+                        Details
+                    </a>
+
+                    <a asp-action="Edit"
+                       asp-route-id="@item.ResultId"
+                       class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.ResultId"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
