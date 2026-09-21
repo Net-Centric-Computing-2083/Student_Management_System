@@ -1,85 +1,275 @@
 @model StudentManagementSystem.Models.Student
 
 @{
-    ViewData["Title"] = "Student Details";
+    ViewData["Title"] = "Student Profile";
+
+    var totalClasses = Model.Attendances?.Count ?? 0;
+    var presentClasses = Model.Attendances?
+        .Count(a => a.Status == "Present") ?? 0;
+
+    var attendancePercentage =
+        totalClasses == 0 ? 0 :
+        (presentClasses * 100.0 / totalClasses);
+
+    var gpa = Model.Results?.Any() == true
+        ? Model.Results.Average(r => (double)r.GPA)
+        : 0;
 }
 
-<h1>Student Details</h1>
+<div class="container mt-4">
 
-<div>
-    <h4>Student</h4>
-    <hr />
+    <div class="card shadow border-0 mb-4">
 
-    <dl class="row">
+        <div class="card-body">
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.StudentId)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.StudentId
-        </dd>
+            <div class="row align-items-center">
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Name
-        </dd>
+                <div class="col-md-2 text-center">
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Email
-        </dd>
+                    @if (!string.IsNullOrEmpty(Model.PhotoPath))
+{
+    <img src="~/uploads/students/@Model.PhotoPath"
+         class="rounded-circle img-fluid border"
+         width="120"
+         height="120"
+         style="object-fit:cover;" />
+}
+else
+{
+    <img src="https://via.placeholder.com/120"
+         class="rounded-circle img-fluid border"
+         width="120"
+         height="120" />
+}
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Phone
-        </dd>
+                </div>
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Address
-        </dd>
+                <div class="col-md-10">
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Gender
-        </dd>
+                    <h2 class="fw-bold">@Model.Name</h2>
 
-        <dt class="col-sm-3">
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </dt>
-        <dd class="col-sm-9">
-            @Model.DateOfBirth.ToString("yyyy-MM-dd")
-        </dd>
+                    <p class="text-muted mb-1">
+                        Registration No:
+                        <span class="fw-semibold">
+                            @Model.RegistrationNumber
+                        </span>
+                    </p>
 
-        <dt class="col-sm-3">
-            Department
-        </dt>
-        <dd class="col-sm-9">
-            @Model.Department?.DepartmentName
-        </dd>
+                    <span class="badge bg-primary">
+                        @Model.Department?.DepartmentName
+                    </span>
 
-    </dl>
-</div>
+                </div>
 
-<div>
-    <a asp-action="Edit"
-       asp-route-id="@Model.StudentId"
-       class="btn btn-warning">
-        Edit
-    </a>
+            </div>
 
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Back to List
-    </a>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-dark text-white">
+                    Personal Information
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+                            <th>Email</th>
+                            <td>@Model.Email</td>
+                        </tr>
+
+                        <tr>
+                            <th>Phone</th>
+                            <td>@Model.Phone</td>
+                        </tr>
+
+                        <tr>
+                            <th>Gender</th>
+                            <td>@Model.Gender</td>
+                        </tr>
+
+                        <tr>
+                            <th>DOB</th>
+                            <td>@Model.DateOfBirth.ToString("yyyy-MM-dd")</td>
+                        </tr>
+
+                        <tr>
+                            <th>Address</th>
+                            <td>@Model.Address</td>
+                        </tr>
+
+                        <tr>
+                            <th>Enrollment</th>
+                            <td>@Model.EnrollmentYear</td>
+                        </tr>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 mb-4">
+
+                <div class="card-header bg-success text-white">
+                    Academic Summary
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-3">
+
+                        <h5>Attendance</h5>
+
+                        <div class="progress" style="height:22px;">
+                            <div class="progress-bar bg-success"
+                                 role="progressbar"
+                                 style="width:@attendancePercentage%">
+                                @attendancePercentage.ToString("0")%
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <hr />
+
+                    <h5>Overall GPA</h5>
+
+                    <h2 class="text-primary fw-bold">
+                        @gpa.ToString("0.00")
+                    </h2>
+
+                    <p class="text-muted">
+                        Based on completed course results
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-primary text-white">
+            Enrolled Courses
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Enrollments?.Any() == true)
+            {
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Course</th>
+                            <th>Credits</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var course in Model.Enrollments)
+                        {
+                            <tr>
+                                <td>@course.Course?.CourseCode</td>
+                                <td>@course.Course?.CourseName</td>
+                                <td>@course.Course?.CreditHours</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">
+                    No enrolled courses.
+                </p>
+            }
+
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-warning">
+            Results
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Results?.Any() == true)
+            {
+                <table class="table table-bordered">
+
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Total</th>
+                            <th>Grade</th>
+                            <th>GPA</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var result in Model.Results)
+                        {
+                            <tr>
+                                <td>@result.Course?.CourseName</td>
+                                <td>@result.TotalMarks</td>
+                                <td>@result.Grade</td>
+                                <td>@result.GPA</td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">
+                    No results available.
+                </p>
+            }
+
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.StudentId"
+           class="btn btn-warning">
+            Edit
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Back
+        </a>
+
+    </div>
+
 </div>

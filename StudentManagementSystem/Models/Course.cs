@@ -31,5 +31,9 @@ namespace StudentManagementSystem.Models
 
         // Navigation property
         public Department? Department { get; set; }
+
+        // One course can have many enrollments
+        public ICollection<Enrollment> Enrollments { get; set; }
+            = new List<Enrollment>();
     }
 }

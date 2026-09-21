@@ -1,0 +1,48 @@
+@model StudentManagementSystem.Models.AssignmentSubmission
+
+@{
+    ViewData["Title"] = "Grade Submission";
+}
+
+<div class="container mt-4">
+    <a asp-action="Submissions" asp-route-id="@Model.AssignmentId" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Submissions</a>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header">
+            <h4 class="mb-0">@Model.Assignment?.Title</h4>
+            <div class="text-muted small">@Model.Assignment?.Course?.CourseName &middot; Submitted by @Model.Student?.Name</div>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Submitted @Model.SubmittedDate.ToString("MMM dd, yyyy h:mm tt")</p>
+            <p style="white-space: pre-wrap;">@Model.SubmissionText</p>
+        </div>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <div class="card shadow-sm" style="max-width:600px;">
+        <div class="card-header fw-bold">Grade This Submission</div>
+        <div class="card-body">
+            <form asp-action="Grade" asp-route-id="@Model.SubmissionId" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Marks (0 - 100)</label>
+                    <input name="Marks" type="number" step="0.01" min="0" max="100"
+                           value="@Model.Marks" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Feedback (optional)</label>
+                    <textarea name="Feedback" class="form-control" rows="4">@Model.Feedback</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Grade</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+@model StudentManagementSystem.Models.Assignment
+
+@{
+    ViewData["Title"] = "Assignment Details";
+}
+
+<div class="container mt-4">
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Assignments</a>
+
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">@Model.Title</h4>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model.AssignmentId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a asp-action="Submissions" asp-route-id="@Model.AssignmentId" class="btn btn-sm btn-outline-primary">View Submissions</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-1">Course: @Model.Course?.CourseName</p>
+            <p class="text-muted mb-3">Due: @Model.DueDate.ToString("MMM dd, yyyy h:mm tt")</p>
+            <p style="white-space: pre-wrap;">@Model.Description</p>
+            <p class="text-muted small mb-0">Created @Model.CreatedDate.ToString("MMM dd, yyyy h:mm tt")</p>
+        </div>
+    </div>
+</div>

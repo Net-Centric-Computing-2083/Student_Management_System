@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
@@ -6,227 +7,225 @@ using StudentManagementSystem.Models;
 
 namespace StudentManagementSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Teacher")]
     public class ResultsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ResultsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public ResultsController(ApplicationDbContext context) => _context = context;
 
-        // GET: Results
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string? searchString,
+            string? grade,
+            string? sortOrder,
+            int page = 1)
         {
-            var results = await _context.Results
+            const int pageSize = 10;
+            page = Math.Max(page, 1);
+
+            var query = _context.Results
                 .Include(r => r.Student)
                 .Include(r => r.Course)
-                .OrderBy(r => r.Student!.Name)
-                .ThenBy(r => r.Course!.CourseName)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                searchString = searchString.Trim();
+                query = query.Where(r =>
+                    (r.Student!.Name ?? "").Contains(searchString) ||
+                    (r.Student.RegistrationNumber ?? "").Contains(searchString) ||
+                    (r.Course!.CourseName ?? "").Contains(searchString) ||
+                    (r.Course.CourseCode ?? "").Contains(searchString));
+            }
+
+            if (!string.IsNullOrWhiteSpace(grade))
+                query = query.Where(r => r.Grade == grade);
+
+            query = sortOrder switch
+            {
+                "marks_asc" => query.OrderBy(r => r.TotalMarks),
+                "marks_desc" => query.OrderByDescending(r => r.TotalMarks),
+                "student_desc" => query.OrderByDescending(r => r.Student!.Name),
+                _ => query.OrderBy(r => r.Student!.Name).ThenBy(r => r.Course!.CourseName)
+            };
+
+            var total = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+            if (totalPages > 0 && page > totalPages) page = totalPages;
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewData["CurrentSearch"] = searchString;
+            ViewData["CurrentGrade"] = grade;
+            ViewData["CurrentSort"] = sortOrder;
+            ViewBag.Grades = await _context.Results
+                .Select(r => r.Grade)
+                .Where(g => !string.IsNullOrWhiteSpace(g))
+                .Distinct()
+                .OrderBy(g => g)
                 .ToListAsync();
 
-            return View(results);
+            return View(await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync());
         }
 
-        // GET: Results/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var result = await _context.Results
                 .Include(r => r.Student)
                 .Include(r => r.Course)
                 .FirstOrDefaultAsync(r => r.ResultId == id);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return View(result);
+            return result == null ? NotFound() : View(result);
         }
 
-        // GET: Results/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            LoadDropdowns();
-            return View();
+            await LoadDropdownsAsync();
+            return View(new Result { ResultDate = DateTime.Today });
         }
 
-        // POST: Results/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Result result)
         {
-            // Check whether the selected student and course are enrolled together
-            bool isEnrolled = await _context.Enrollments
-                .AnyAsync(e =>
-                    e.StudentId == result.StudentId &&
-                    e.CourseId == result.CourseId);
+            await ValidateResultAsync(result);
 
-            if (!isEnrolled)
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError(
-                    "",
-                    "The selected student is not enrolled in the selected course.");
+                await LoadDropdownsAsync(result.StudentId, result.CourseId);
+                return View(result);
             }
 
-            // Prevent duplicate result for the same student and course
-            bool duplicateResult = await _context.Results
-                .AnyAsync(r =>
-                    r.StudentId == result.StudentId &&
-                    r.CourseId == result.CourseId);
+            CalculateResult(result);
+            _context.Results.Add(result);
+            await _context.SaveChangesAsync();
 
-            if (duplicateResult)
-            {
-                ModelState.AddModelError(
-                    "",
-                    "A result already exists for this student and course.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                _context.Add(result);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            LoadDropdowns(result.StudentId, result.CourseId);
-
-            return View(result);
+            TempData["SuccessMessage"] = "Result saved successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Results/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var result = await _context.Results.FindAsync(id);
+            if (result == null) return NotFound();
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            LoadDropdowns(result.StudentId, result.CourseId);
-
+            await LoadDropdownsAsync(result.StudentId, result.CourseId);
             return View(result);
         }
 
-        // POST: Results/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            int id,
-            Result result)
+        public async Task<IActionResult> Edit(int id, Result result)
         {
-            if (id != result.ResultId)
+            if (id != result.ResultId) return NotFound();
+
+            await ValidateResultAsync(result, result.ResultId);
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                await LoadDropdownsAsync(result.StudentId, result.CourseId);
+                return View(result);
             }
 
-            bool duplicateResult = await _context.Results
-                .AnyAsync(r =>
-                    r.ResultId != result.ResultId &&
-                    r.StudentId == result.StudentId &&
-                    r.CourseId == result.CourseId);
+            CalculateResult(result);
 
-            if (duplicateResult)
+            try
             {
-                ModelState.AddModelError(
-                    "",
-                    "A result already exists for this student and course.");
+                _context.Update(result);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Results.AnyAsync(r => r.ResultId == id))
+                    return NotFound();
+                throw;
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(result);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ResultExists(result.ResultId))
-                    {
-                        return NotFound();
-                    }
-
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            LoadDropdowns(result.StudentId, result.CourseId);
-
-            return View(result);
+            TempData["SuccessMessage"] = "Result updated successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Results/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var result = await _context.Results
                 .Include(r => r.Student)
                 .Include(r => r.Course)
                 .FirstOrDefaultAsync(r => r.ResultId == id);
 
-            if (result == null)
-            {
-                return NotFound();
-            }
-
-            return View(result);
+            return result == null ? NotFound() : View(result);
         }
 
-        // POST: Results/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var result = await _context.Results.FindAsync(id);
+            if (result == null) return NotFound();
 
-            if (result != null)
-            {
-                _context.Results.Remove(result);
-                await _context.SaveChangesAsync();
-            }
+            _context.Results.Remove(result);
+            await _context.SaveChangesAsync();
 
+            TempData["SuccessMessage"] = "Result deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ResultExists(int id)
+        private async Task ValidateResultAsync(Result result, int? excludeId = null)
         {
-            return _context.Results.Any(e => e.ResultId == id);
+            var studentExists = await _context.Students.AnyAsync(s => s.StudentId == result.StudentId);
+            var courseExists = await _context.Courses.AnyAsync(c => c.CourseId == result.CourseId);
+
+            if (!studentExists) ModelState.AddModelError(nameof(Result.StudentId), "Select a valid student.");
+            if (!courseExists) ModelState.AddModelError(nameof(Result.CourseId), "Select a valid course.");
+
+            if (studentExists && courseExists)
+            {
+                var enrolled = await _context.Enrollments.AnyAsync(e =>
+                    e.StudentId == result.StudentId && e.CourseId == result.CourseId);
+
+                if (!enrolled)
+                    ModelState.AddModelError("", "The selected student is not enrolled in the selected course.");
+            }
+
+            if (await _context.Results.AnyAsync(r =>
+                r.ResultId != excludeId &&
+                r.StudentId == result.StudentId &&
+                r.CourseId == result.CourseId))
+            {
+                ModelState.AddModelError("", "A result already exists for this student and course.");
+            }
         }
 
-        private void LoadDropdowns(
-            int? selectedStudentId = null,
-            int? selectedCourseId = null)
+        private static void CalculateResult(Result result)
+        {
+            result.TotalMarks = result.InternalMarks + result.PracticalMarks + result.FinalMarks;
+            result.Grade = result.TotalMarks switch
+            {
+                >= 90 => "A+",
+                >= 80 => "A",
+                >= 70 => "B+",
+                >= 60 => "B",
+                >= 50 => "C+",
+                >= 40 => "C",
+                >= 30 => "D",
+                _ => "F"
+            };
+        }
+
+        private async Task LoadDropdownsAsync(int? studentId = null, int? courseId = null)
         {
             ViewData["StudentId"] = new SelectList(
-                _context.Students.OrderBy(s => s.Name),
-                "StudentId",
-                "Name",
-                selectedStudentId);
+                await _context.Students.OrderBy(s => s.Name).ToListAsync(),
+                "StudentId", "Name", studentId);
 
             ViewData["CourseId"] = new SelectList(
-                _context.Courses.OrderBy(c => c.CourseName),
-                "CourseId",
-                "CourseName",
-                selectedCourseId);
+                await _context.Courses.OrderBy(c => c.CourseName).ToListAsync(),
+                "CourseId", "CourseName", courseId);
         }
     }
 }

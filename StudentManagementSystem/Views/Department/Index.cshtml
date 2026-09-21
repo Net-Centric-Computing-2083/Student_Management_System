@@ -6,63 +6,537 @@
 
 <h1>Departments</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <a asp-action="Create"
+       class="btn btn-primary">
         Create New Department
     </a>
-</p>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- Search and Filters -->
+<!-- ========================================================= -->
+
+<form asp-action="Index"
+      method="get"
+      class="row g-3 mb-4">
+
+    <!-- Search -->
+    <div class="col-md-5">
+
+        <label class="form-label">
+            Search
+        </label>
+
+        <input type="text"
+               name="searchString"
+               value="@ViewData["SearchString"]"
+               class="form-control"
+               placeholder="Name, code, or HOD..." />
+
+    </div>
+
+
+    <!-- Department Code -->
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Department Code
+        </label>
+
+        <select name="departmentCode"
+                class="form-select">
+
+            <option value="">
+                All Departments
+            </option>
+
+            @foreach (var code in ViewBag.DepartmentCodes)
+            {
+                <option value="@code"
+                        selected="@(ViewData["DepartmentCode"]?.ToString() == code)">
+                    @code
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+
+    <!-- Student Status -->
+    <div class="col-md-3">
+
+        <label class="form-label">
+            Student Status
+        </label>
+
+        <select name="studentStatus"
+                class="form-select">
+
+            <option value=""
+                    selected="@(string.IsNullOrEmpty(ViewData["StudentStatus"]?.ToString()))">
+                All Departments
+            </option>
+
+            <option value="HasStudents"
+                    selected="@(ViewData["StudentStatus"]?.ToString() == "HasStudents")">
+                Has Students
+            </option>
+
+            <option value="NoStudents"
+                    selected="@(ViewData["StudentStatus"]?.ToString() == "NoStudents")">
+                No Students
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- Filter Button -->
+    <div class="col-md-1 d-flex align-items-end">
+
+        <button type="submit"
+                class="btn btn-primary">
+            Filter
+        </button>
+
+    </div>
+
+
+    <!-- Clear Filters -->
+    <div class="col-12">
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Clear Filters
+        </a>
+
+    </div>
+
+</form>
+
+
+<!-- ========================================================= -->
+<!-- Sort By -->
+<!-- ========================================================= -->
+
+<div class="row mb-3">
+
+    <div class="col-md-4">
+
+        <label class="form-label">
+            Sort By
+        </label>
+
+        <form asp-action="Index"
+              method="get">
+
+            <!-- Keep Search -->
+            <input type="hidden"
+                   name="searchString"
+                   value="@ViewData["SearchString"]" />
+
+
+            <!-- Keep Department Filter -->
+            <input type="hidden"
+                   name="departmentCode"
+                   value="@ViewData["DepartmentCode"]" />
+
+
+            <!-- Keep Student Filter -->
+            <input type="hidden"
+                   name="studentStatus"
+                   value="@ViewData["StudentStatus"]" />
+
+
+            <select name="sortOrder"
+                    class="form-select"
+                    onchange="this.form.submit()">
+
+                <option value=""
+                        selected="@(string.IsNullOrEmpty(ViewData["SortOrder"]?.ToString()))">
+                    Department Name (A-Z)
+                </option>
+
+                <option value="name_desc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "name_desc")">
+                    Department Name (Z-A)
+                </option>
+
+                <option value="code_asc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "code_asc")">
+                    Department Code (A-Z)
+                </option>
+
+                <option value="code_desc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "code_desc")">
+                    Department Code (Z-A)
+                </option>
+
+                <option value="hod_asc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "hod_asc")">
+                    HOD (A-Z)
+                </option>
+
+                <option value="hod_desc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "hod_desc")">
+                    HOD (Z-A)
+                </option>
+
+                <option value="students_asc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "students_asc")">
+                    Students (Low to High)
+                </option>
+
+                <option value="students_desc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "students_desc")">
+                    Students (High to Low)
+                </option>
+
+                <option value="courses_asc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "courses_asc")">
+                    Courses (Low to High)
+                </option>
+
+                <option value="courses_desc"
+                        selected="@(ViewData["SortOrder"]?.ToString() == "courses_desc")">
+                    Courses (High to Low)
+                </option>
+
+            </select>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- Department Table -->
+<!-- ========================================================= -->
 
 <table class="table table-bordered table-striped">
+
     <thead>
+
         <tr>
-            <th>Department Name</th>
-            <th>Description</th>
-            <th>Students</th>
-            <th>Courses</th>
-            <th>Actions</th>
+
+            <!-- Department Name -->
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-searchString="@ViewData["SearchString"]"
+                   asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                   asp-route-studentStatus="@ViewData["StudentStatus"]"
+                   asp-route-sortOrder="name">
+
+                    Department Name
+
+                </a>
+            </th>
+
+
+            <!-- Department Code -->
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-searchString="@ViewData["SearchString"]"
+                   asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                   asp-route-studentStatus="@ViewData["StudentStatus"]"
+                   asp-route-sortOrder="code_asc">
+
+                    Department Code
+
+                </a>
+            </th>
+
+
+            <!-- HOD -->
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-searchString="@ViewData["SearchString"]"
+                   asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                   asp-route-studentStatus="@ViewData["StudentStatus"]"
+                   asp-route-sortOrder="hod_asc">
+
+                    Head of Department
+
+                </a>
+            </th>
+
+
+            <!-- Description -->
+
+            <th>
+                Description
+            </th>
+
+
+            <!-- Students -->
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-searchString="@ViewData["SearchString"]"
+                   asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                   asp-route-studentStatus="@ViewData["StudentStatus"]"
+                   asp-route-sortOrder="students_asc">
+
+                    Students
+
+                </a>
+            </th>
+
+
+            <!-- Courses -->
+
+            <th>
+                <a asp-action="Index"
+                   asp-route-searchString="@ViewData["SearchString"]"
+                   asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                   asp-route-studentStatus="@ViewData["StudentStatus"]"
+                   asp-route-sortOrder="courses_asc">
+
+                    Courses
+
+                </a>
+            </th>
+
+
+            <!-- Actions -->
+
+            <th>
+                Actions
+            </th>
+
         </tr>
+
     </thead>
 
+
     <tbody>
-        @foreach (var item in Model)
+
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <!-- Department Name -->
+
+                    <td>
+                        @item.DepartmentName
+                    </td>
+
+
+                    <!-- Department Code -->
+
+                    <td>
+                        @item.DepartmentCode
+                    </td>
+
+
+                    <!-- HOD -->
+
+                    <td>
+                        @item.HodName
+                    </td>
+
+
+                    <!-- Description -->
+
+                    <td>
+                        @item.Description
+                    </td>
+
+
+                    <!-- Students -->
+
+                    <td>
+                        @item.Students.Count
+                    </td>
+
+
+                    <!-- Courses -->
+
+                    <td>
+                        @item.Courses.Count
+                    </td>
+
+
+                    <!-- Actions -->
+
+                    <td>
+
+                        <a asp-action="Edit"
+                           asp-route-id="@item.DepartmentId"
+                           class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+
+                        <a asp-action="Details"
+                           asp-route-id="@item.DepartmentId"
+                           class="btn btn-sm btn-info">
+                            Details
+                        </a>
+
+                        <a asp-action="Students"
+                           asp-route-id="@item.DepartmentId"
+                           class="btn btn-sm btn-success">
+                            View Students
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@item.DepartmentId"
+                           class="btn btn-sm btn-danger">
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>
-                    @item.DepartmentName
+
+                <td colspan="7"
+                    class="text-center text-muted">
+
+                    No departments found.
+
                 </td>
 
-                <td>
-                    @item.Description
-                </td>
-
-                <td>
-                    @item.Students.Count
-                </td>
-
-                <td>
-                    @item.Courses.Count
-                </td>
-
-                <td>
-                    <a asp-action="Edit"
-                       asp-route-id="@item.DepartmentId"
-                       class="btn btn-sm btn-warning">
-                        Edit
-                    </a>
-
-                    <a asp-action="Details"
-                       asp-route-id="@item.DepartmentId"
-                       class="btn btn-sm btn-info">
-                        Details
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@item.DepartmentId"
-                       class="btn btn-sm btn-danger">
-                        Delete
-                    </a>
-                </td>
             </tr>
         }
+
     </tbody>
+
 </table>
+
+
+<!-- ========================================================= -->
+<!-- Pagination -->
+<!-- ========================================================= -->
+@{
+    int currentPage =
+        (int)(ViewData["CurrentPage"] ?? 1);
+
+    int totalPages =
+        (int)(ViewData["TotalPages"] ?? 1);
+
+    int totalDepartments =
+        (int)(ViewData["TotalDepartments"] ?? 0);
+}
+
+
+@if (totalDepartments > 0)
+{
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <!-- Total Departments -->
+
+        <div>
+
+            <span class="text-muted">
+                Total Departments: @totalDepartments
+            </span>
+
+        </div>
+
+
+        <!-- Pagination -->
+
+        <nav>
+
+            <ul class="pagination mb-0">
+
+                <!-- Previous -->
+
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+
+                    @if (currentPage > 1)
+                    {
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@(currentPage - 1)"
+                           asp-route-searchString="@ViewData["SearchString"]"
+                           asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                           asp-route-studentStatus="@ViewData["StudentStatus"]"
+                           asp-route-sortOrder="@ViewData["SortOrder"]">
+
+                            Previous
+
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-link">
+                            Previous
+                        </span>
+                    }
+
+                </li>
+
+
+                <!-- Page Numbers -->
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-searchString="@ViewData["SearchString"]"
+                           asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                           asp-route-studentStatus="@ViewData["StudentStatus"]"
+                           asp-route-sortOrder="@ViewData["SortOrder"]">
+
+                            @i
+
+                        </a>
+
+                    </li>
+                }
+
+
+                <!-- Next -->
+
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+
+                    @if (currentPage < totalPages)
+                    {
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@(currentPage + 1)"
+                           asp-route-searchString="@ViewData["SearchString"]"
+                           asp-route-departmentCode="@ViewData["DepartmentCode"]"
+                           asp-route-studentStatus="@ViewData["StudentStatus"]"
+                           asp-route-sortOrder="@ViewData["SortOrder"]">
+
+                            Next
+
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-link">
+                            Next
+                        </span>
+                    }
+
+                </li>
+
+            </ul>
+
+        </nav>
+
+    </div>
+}

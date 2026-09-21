@@ -1,0 +1,92 @@
+@model StudentManagementSystem.ViewModels.AdminReportsViewModel
+
+@{
+    ViewData["Title"] = "Reports & Analytics";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Reports &amp; Analytics</h1>
+    <p class="text-muted">Cross-cutting statistics across the whole system.</p>
+
+    <div class="row g-3 mt-1">
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Students</div>
+                <div class="fs-3 fw-bold">@Model.TotalStudents</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Teachers</div>
+                <div class="fs-3 fw-bold">@Model.TotalTeachers</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Courses</div>
+                <div class="fs-3 fw-bold">@Model.TotalCourses</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Departments</div>
+                <div class="fs-3 fw-bold">@Model.TotalDepartments</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Enrollments</div>
+                <div class="fs-3 fw-bold">@Model.TotalEnrollments</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Overall Average GPA</div>
+                <div class="fs-3 fw-bold">@Model.AverageGPA.ToString("0.00")</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Overall Attendance</div>
+                <div class="fs-3 fw-bold">@Model.OverallAttendancePercentage.ToString("0.0")%</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Pending Leave Requests</div>
+                <div class="fs-3 fw-bold">@Model.PendingLeaveRequests</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Assignments</div>
+                <div class="fs-3 fw-bold">@Model.TotalAssignments</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Submissions Graded</div>
+                <div class="fs-3 fw-bold">@Model.GradedSubmissions / @Model.TotalSubmissions</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Fees Billed</div>
+                <div class="fs-3 fw-bold">@Model.TotalFeesBilled.ToString("N0")</div>
+            </div></div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm h-100"><div class="card-body text-center">
+                <div class="text-muted small">Fees Collected</div>
+                <div class="fs-3 fw-bold">@Model.TotalFeesCollected.ToString("N0")</div>
+            </div></div>
+        </div>
+    </div>
+
+    <div class="mt-4 d-flex flex-wrap gap-2">
+        <a asp-controller="Attendance" asp-action="History" class="btn btn-outline-secondary btn-sm">Detailed Attendance Report</a>
+        <a asp-controller="Results" asp-action="Index" class="btn btn-outline-secondary btn-sm">Detailed Results Report</a>
+        <a asp-action="Assignments" class="btn btn-outline-secondary btn-sm">Assignment Monitoring</a>
+        <a asp-action="Fees" class="btn btn-outline-secondary btn-sm">Fee Report</a>
+    </div>
+</div>

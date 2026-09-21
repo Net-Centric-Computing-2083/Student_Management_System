@@ -1,0 +1,45 @@
+@model List<StudentManagementSystem.ViewModels.TeacherCourseReportViewModel>
+
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Reports</h1>
+    <p class="text-muted">Attendance, grade, and assignment summaries for your own courses.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No course data available yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course</th>
+                        <th>Enrolled Students</th>
+                        <th>Attendance %</th>
+                        <th>Average GPA</th>
+                        <th>Assignments</th>
+                        <th>Submissions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model)
+                    {
+                        <tr>
+                            <td>@r.Course.CourseName</td>
+                            <td>@r.EnrolledStudents</td>
+                            <td>@r.AttendancePercentage.ToString("0.0")%</td>
+                            <td>@r.AverageGPA.ToString("0.00")</td>
+                            <td>@r.TotalAssignments</td>
+                            <td>@r.TotalSubmissions</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

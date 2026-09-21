@@ -1,0 +1,111 @@
+@using StudentManagementSystem.Models
+@{
+    ViewData["Title"] = "Student Performance Details";
+    var student = ViewBag.Student as Student;
+    var results = ViewBag.Results as List<Result> ?? new();
+    var attendance = ViewBag.Attendance as List<Attendance> ?? new();
+    var submissions = ViewBag.Submissions as List<AssignmentSubmission> ?? new();
+}
+
+<div class="container mt-4">
+    <a asp-action="StudentPerformance" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Student Performance</a>
+
+    <h1 class="fw-bold">@student?.Name</h1>
+    <p class="text-muted">@student?.RegistrationNumber &middot; @student?.Email</p>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Results (Your Courses)</div>
+                <div class="card-body p-0">
+                    @if (!results.Any())
+                    {
+                        <p class="text-muted p-3 mb-0">No results recorded yet.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm mb-0">
+                            <thead class="table-light">
+                                <tr><th>Course</th><th>Total Marks</th><th>Grade</th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var r in results)
+                                {
+                                    <tr>
+                                        <td>@r.Course?.CourseName</td>
+                                        <td>@r.TotalMarks</td>
+                                        <td>@r.Grade</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Attendance (Your Courses)</div>
+                <div class="card-body p-0" style="max-height:320px; overflow-y:auto;">
+                    @if (!attendance.Any())
+                    {
+                        <p class="text-muted p-3 mb-0">No attendance recorded yet.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm mb-0">
+                            <thead class="table-light">
+                                <tr><th>Date</th><th>Course</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in attendance)
+                                {
+                                    <tr>
+                                        <td>@a.AttendanceDate.ToString("MMM dd, yyyy")</td>
+                                        <td>@a.Course?.CourseName</td>
+                                        <td>
+                                            <span class="badge @(a.Status == "Present" ? "bg-success" : "bg-danger")">@a.Status</span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header fw-bold">Assignment Submissions (Your Assignments)</div>
+                <div class="card-body p-0">
+                    @if (!submissions.Any())
+                    {
+                        <p class="text-muted p-3 mb-0">No submissions yet.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm mb-0">
+                            <thead class="table-light">
+                                <tr><th>Assignment</th><th>Course</th><th>Submitted</th><th>Marks</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in submissions)
+                                {
+                                    <tr>
+                                        <td>@s.Assignment?.Title</td>
+                                        <td>@s.Assignment?.Course?.CourseName</td>
+                                        <td>@s.SubmittedDate.ToString("MMM dd, yyyy")</td>
+                                        <td>@(s.Marks.HasValue ? s.Marks.Value.ToString("0.##") : "-")</td>
+                                        <td>@s.Status</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

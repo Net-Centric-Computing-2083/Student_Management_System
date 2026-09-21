@@ -1,0 +1,54 @@
+@model StudentManagementSystem.Models.Teacher
+
+@{
+    ViewData["Title"] = "Teacher Details";
+    var schedule = ViewBag.Schedule as List<StudentManagementSystem.Models.ClassSchedule> ?? new();
+}
+
+<div class="container mt-4">
+    <a asp-action="Teachers" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Teachers</a>
+
+    <div class="card shadow-sm mb-4" style="max-width:600px;">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8">@Model.Name</dd>
+
+                <dt class="col-sm-4">Email</dt>
+                <dd class="col-sm-8">@Model.Email</dd>
+
+                <dt class="col-sm-4">Phone</dt>
+                <dd class="col-sm-8">@(Model.Phone ?? "-")</dd>
+
+                <dt class="col-sm-4">Department</dt>
+                <dd class="col-sm-8">@(Model.Department?.DepartmentName ?? "-")</dd>
+            </dl>
+        </div>
+    </div>
+
+    <h5 class="fw-bold">Assigned Courses</h5>
+    @if (!schedule.Any())
+    {
+        <p class="text-muted">Not yet assigned to any courses.</p>
+    }
+    else
+    {
+        <table class="table table-sm">
+            <thead class="table-light">
+                <tr><th>Course</th><th>Semester</th><th>Day</th><th>Time</th><th>Room</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var cs in schedule)
+                {
+                    <tr>
+                        <td>@cs.Course?.CourseName</td>
+                        <td>@cs.Semester?.SemesterName (@cs.Semester?.AcademicYear)</td>
+                        <td>@cs.DayOfWeek</td>
+                        <td>@cs.StartTime.ToString(@"hh\:mm") - @cs.EndTime.ToString(@"hh\:mm")</td>
+                        <td>@cs.Room</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

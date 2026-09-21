@@ -1,0 +1,52 @@
+﻿@model StudentManagementSystem.Models.Department
+
+@{
+    ViewData["Title"] = "Students - " + Model.DepartmentName;
+}
+
+<h1>Students in @Model.DepartmentName</h1>
+
+<div class="mb-3">
+    <strong>Department Code:</strong> @Model.DepartmentCode
+    <br />
+    <strong>Head of Department:</strong> @Model.HodName
+</div>
+
+<hr />
+
+<h4>Students</h4>
+
+@if (Model.Students.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var student in Model.Students.OrderBy(s => s.Name))
+            {
+                <tr>
+                    <td>@student.StudentId</td>
+                    <td>@student.Name</td>
+                    <td>@student.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">
+        No students are assigned to this department.
+    </div>
+}
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+    Back to Departments
+</a>

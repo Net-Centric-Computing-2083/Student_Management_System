@@ -1,66 +1,94 @@
-﻿@model IEnumerable<StudentManagementSystem.Models.Result>
-
+@model IEnumerable<StudentManagementSystem.Models.Result>
 @{
     ViewData["Title"] = "Results";
 }
 
-<h1>Results</h1>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2>Result Management</h2>
+            <p class="text-muted">Manage marks and grades.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary">Add Result</a>
+    </div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add Result</a>
-</p>
+    <form method="get" class="card card-body mb-3">
+        <div class="row g-2">
+            <div class="col-md-5">
+                <input name="searchString" value="@ViewData["CurrentSearch"]"
+                       class="form-control" placeholder="Student, registration no., course or code" />
+            </div>
+            <div class="col-md-4">
+                <select name="grade" class="form-select">
+                    <option value="">All Grades</option>
+                    @foreach (string grade in ViewBag.Grades)
+                    {
+                        if (grade == (string?)ViewData["CurrentGrade"])
+                        {
+                            <option value="@grade" selected>@grade</option>
+                        }
+                        else
+                        {
+                            <option value="@grade">@grade</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary">Search</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </div>
+    </form>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Marks</th>
-            <th>Grade</th>
-            <th>Result Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
+    <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Student</th><th>Course</th><th>Total</th><th>Grade</th>
+                    <th>GPA</th><th>Date</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted">No results found.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Student?.Name</td>
+                        <td>@item.Course?.CourseName</td>
+                        <td>@item.TotalMarks.ToString("0.00")</td>
+                        <td>@item.Grade</td>
+                        <td>@item.GPA.ToString("0.00")</td>
+                        <td>@item.ResultDate.ToString("yyyy-MM-dd")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.ResultId" class="btn btn-sm btn-info">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.ResultId" class="btn btn-sm btn-warning">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.ResultId" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @item.Student?.Name
-                </td>
-                <td>
-                    @item.Course?.CourseName
-                </td>
-                <td>
-                    @item.Marks
-                </td>
-                <td>
-                    @item.Grade
-                </td>
-                <td>
-                    @item.ResultDate.ToString("yyyy-MM-dd")
-                </td>
-                <td>
-                    <a asp-action="Details"
-                       asp-route-id="@item.ResultId"
-                       class="btn btn-info btn-sm">
-                        Details
-                    </a>
-
-                    <a asp-action="Edit"
-                       asp-route-id="@item.ResultId"
-                       class="btn btn-warning btn-sm">
-                        Edit
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@item.ResultId"
-                       class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    @if ((int)ViewBag.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination">
+                @for (int i = 1; i <= (int)ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == (int)ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link"
+                           asp-route-page="@i"
+                           asp-route-searchString="@ViewData["CurrentSearch"]"
+                           asp-route-grade="@ViewData["CurrentGrade"]"
+                           asp-route-sortOrder="@ViewData["CurrentSort"]">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+</div>

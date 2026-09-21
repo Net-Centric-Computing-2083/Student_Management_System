@@ -1,74 +1,43 @@
-﻿@model StudentManagementSystem.Models.Enrollment
+@model StudentManagementSystem.Models.Enrollment
+@{ ViewData["Title"] = "Edit Enrollment"; }
 
-@{
-    ViewData["Title"] = "Edit Enrollment";
-}
-
-<h1>Edit Enrollment</h1>
-
-<hr />
-
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Edit" method="post">
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <input type="hidden" asp-for="EnrollmentId" />
-
-            <div class="form-group mb-3">
-                <label asp-for="StudentId" class="control-label"></label>
-                <select asp-for="StudentId"
-                        class="form-control"
-                        asp-items="ViewBag.StudentId">
-                </select>
-                <span asp-validation-for="StudentId"
-                      class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="CourseId" class="control-label"></label>
-                <select asp-for="CourseId"
-                        class="form-control"
-                        asp-items="ViewBag.CourseId">
-                </select>
-                <span asp-validation-for="CourseId"
-                      class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="EnrollmentDate"
-                       class="control-label"></label>
-                <input asp-for="EnrollmentDate"
-                       class="form-control"
-                       type="date" />
-                <span asp-validation-for="EnrollmentDate"
-                      class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Status"
-                       class="control-label"></label>
-
-                <select asp-for="Status" class="form-control">
-                    <option value="Active">Active</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-
-                <span asp-validation-for="Status"
-                      class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                Save
-            </button>
-
-            <a asp-action="Index"
-               class="btn btn-secondary">
-                Back to List
-            </a>
-
-        </form>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header"><h3 class="mb-0">Edit Enrollment</h3></div>
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="EnrollmentId" />
+                <div class="mb-3">
+                    <label asp-for="StudentId" class="form-label"></label>
+                    <select asp-for="StudentId" asp-items="ViewBag.StudentId" class="form-select"></select>
+                    <span asp-validation-for="StudentId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="CourseId" class="form-label"></label>
+                    <select asp-for="CourseId" asp-items="ViewBag.CourseId" class="form-select"></select>
+                    <span asp-validation-for="CourseId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SemesterId" class="form-label"></label>
+                    <select asp-for="SemesterId" asp-items="ViewBag.SemesterId" class="form-select"></select>
+                    <span asp-validation-for="SemesterId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="EnrollmentDate" class="form-label"></label>
+                    <input asp-for="EnrollmentDate" type="date" class="form-control" />
+                    <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select">
+                        <option>Active</option><option>Completed</option><option>Cancelled</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Back</a>
+            </form>
+        </div>
     </div>
 </div>
+@section Scripts { @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } }

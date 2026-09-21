@@ -1,40 +1,21 @@
-﻿@model IEnumerable<StudentManagementSystem.Models.Enrollment>
+@model IEnumerable<StudentManagementSystem.Models.Enrollment>
+@{ ViewData["Title"] = "Enrollments"; }
 
-@{
-    ViewData["Title"] = "Enrollments";
-}
-
-<h1>Enrollments</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New Enrollment</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Enrollment Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Student?.Name</td>
-                <td>@item.Course?.CourseName</td>
-                <td>@item.EnrollmentDate.ToString("yyyy-MM-dd")</td>
-                <td>@item.Status</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.EnrollmentId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.EnrollmentId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.EnrollmentId">Delete</a>
-                </td>
-            </tr>
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3"><div><h2>Enrollment Management</h2><p class="text-muted">Manage student-course enrollments by semester.</p></div><a asp-action="Create" class="btn btn-primary">Add Enrollment</a></div>
+    <form method="get" class="card card-body mb-3"><div class="row g-2">
+        <div class="col-md-5"><input name="searchString" value="@ViewData["CurrentSearch"]" class="form-control" placeholder="Student, registration no., course or code" /></div>
+        <div class="col-md-4"><select name="semesterId" asp-items="ViewBag.Semesters" class="form-select"><option value="">All Semesters</option></select></div>
+        <div class="col-md-3"><button class="btn btn-primary">Search</button> <a asp-action="Index" class="btn btn-outline-secondary">Reset</a></div>
+    </div></form>
+    <div class="table-responsive"><table class="table table-hover">
+        <thead class="table-dark"><tr><th>Student</th><th>Course</th><th>Semester</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+        @if (!Model.Any()) { <tr><td colspan="6" class="text-center text-muted">No enrollments found.</td></tr> }
+        @foreach (var item in Model) {
+            <tr><td>@item.Student?.Name<br /><small>@item.Student?.RegistrationNumber</small></td><td>@item.Course?.CourseName</td><td>@item.Semester?.AcademicYear - @item.Semester?.SemesterName</td><td>@item.EnrollmentDate.ToString("yyyy-MM-dd")</td><td>@item.Status</td><td><a asp-action="Details" asp-route-id="@item.EnrollmentId" class="btn btn-sm btn-info">Details</a> <a asp-action="Edit" asp-route-id="@item.EnrollmentId" class="btn btn-sm btn-warning">Edit</a> <a asp-action="Delete" asp-route-id="@item.EnrollmentId" class="btn btn-sm btn-danger">Delete</a></td></tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table></div>
+    @if ((int)ViewBag.TotalPages > 1) { <nav><ul class="pagination">@for (int i=1;i<=(int)ViewBag.TotalPages;i++){<li class="page-item @(i==(int)ViewBag.CurrentPage?"active":"")"><a class="page-link" asp-route-page="@i" asp-route-searchString="@ViewData["CurrentSearch"]" asp-route-semesterId="@ViewData["CurrentSemester"]" asp-route-sortOrder="@ViewData["CurrentSort"]">@i</a></li>}</ul></nav> }
+</div>

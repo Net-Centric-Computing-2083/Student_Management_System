@@ -1,0 +1,40 @@
+@model StudentManagementSystem.Models.Assignment
+
+@{
+    ViewData["Title"] = "Assignment Details";
+    var submission = ViewBag.Submission as StudentManagementSystem.Models.AssignmentSubmission;
+}
+
+<div class="container mt-4">
+    <a asp-action="StudentAssignments" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Assignments</a>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">@Model.Title</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-1">Course: @Model.Course?.CourseName</p>
+            <p class="text-muted mb-3">Due: @Model.DueDate.ToString("MMM dd, yyyy h:mm tt")</p>
+            <p style="white-space: pre-wrap;">@Model.Description</p>
+
+            @if (submission == null)
+            {
+                if (Model.DueDate < DateTime.Now)
+                {
+                    <div class="alert alert-danger mt-3">The due date for this assignment has passed.</div>
+                }
+                else
+                {
+                    <a asp-action="Submit" asp-route-id="@Model.AssignmentId" class="btn btn-primary mt-2">Submit Assignment</a>
+                }
+            }
+            else
+            {
+                <div class="alert alert-success mt-3">
+                    You submitted this assignment on @submission.SubmittedDate.ToString("MMM dd, yyyy h:mm tt").
+                </div>
+                <a asp-action="MySubmission" asp-route-id="@Model.AssignmentId" class="btn btn-outline-primary">View My Submission</a>
+            }
+        </div>
+    </div>
+</div>

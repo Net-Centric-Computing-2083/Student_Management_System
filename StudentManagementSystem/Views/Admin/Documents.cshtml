@@ -1,0 +1,59 @@
+@model List<StudentManagementSystem.Models.Document>
+
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="fw-bold mb-0">Documents</h1>
+        <a asp-action="UploadDocument" class="btn btn-primary">+ Upload Document</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3" style="max-width:300px;">
+        <div class="col">
+            <select name="studentId" asp-items="ViewBag.Students" class="form-select" onchange="this.form.submit()">
+                <option value="">All Students</option>
+            </select>
+        </div>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No documents uploaded yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Student</th>
+                        <th>Uploaded</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            <td>@d.Title</td>
+                            <td>@d.DocumentType</td>
+                            <td>@d.Student?.Name</td>
+                            <td>@d.UploadedDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a asp-action="DownloadDocument" asp-route-id="@d.DocumentId" class="btn btn-sm btn-outline-primary">Download</a>
+                                <form asp-action="DeleteDocument" asp-route-id="@d.DocumentId" method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete this document?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

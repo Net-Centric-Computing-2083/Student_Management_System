@@ -1,0 +1,42 @@
+@model List<StudentManagementSystem.Models.Announcement>
+
+@{
+    ViewData["Title"] = "Announcements";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Announcements</h1>
+    <p class="text-muted">Announcements relevant to you.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">There are no announcements right now.</div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var a in Model)
+            {
+                <a asp-action="AnnouncementDetails" asp-route-id="@a.AnnouncementId"
+                   class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@a.Title</h5>
+                        <small class="text-muted">@a.CreatedDate.ToString("MMM dd, yyyy")</small>
+                    </div>
+                    <p class="mb-1 text-truncate">@a.Content</p>
+                    <small class="text-muted">
+                        By @a.AuthorName
+                        @if (a.Scope == "Course" && a.Course != null)
+                        {
+                            <span> &middot; @a.Course.CourseName</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">System-wide</span>
+                        }
+                    </small>
+                </a>
+            }
+        </div>
+    }
+</div>

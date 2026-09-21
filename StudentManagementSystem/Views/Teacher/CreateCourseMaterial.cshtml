@@ -1,0 +1,50 @@
+@{
+    ViewData["Title"] = "Upload Course Material";
+    var courses = ViewBag.Courses as List<StudentManagementSystem.Models.Course> ?? new();
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Upload Course Material</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form asp-action="CreateCourseMaterial" method="post" enctype="multipart/form-data" style="max-width:600px;">
+        <div class="mb-3">
+            <label class="form-label">Course</label>
+            <select name="CourseId" class="form-select">
+                <option value="">-- Select a course --</option>
+                @foreach (var c in courses)
+                {
+                    <option value="@c.CourseId">@c.CourseName</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input name="Title" type="text" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description (optional)</label>
+            <textarea name="Description" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">File</label>
+            <input name="MaterialFile" type="file" class="form-control" required />
+            <div class="form-text">PDF, Word, PowerPoint, Excel, TXT, ZIP, JPG, or PNG. Max 20&nbsp;MB.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Upload</button>
+        <a asp-action="CourseMaterials" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

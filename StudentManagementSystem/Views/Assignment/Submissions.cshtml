@@ -1,0 +1,52 @@
+@model List<StudentManagementSystem.Models.AssignmentSubmission>
+
+@{
+    ViewData["Title"] = "Submissions";
+    var assignment = ViewBag.Assignment as StudentManagementSystem.Models.Assignment;
+}
+
+<div class="container mt-4">
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Assignments</a>
+
+    <h1 class="fw-bold">Submissions</h1>
+    <p class="text-muted">@assignment?.Title &middot; @assignment?.Course?.CourseName &middot; Due @assignment?.DueDate.ToString("MMM dd, yyyy h:mm tt")</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No students have submitted this assignment yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th>Marks</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+                        <tr>
+                            <td>@s.Student?.Name</td>
+                            <td>@s.SubmittedDate.ToString("MMM dd, yyyy h:mm tt")</td>
+                            <td>
+                                <span class="badge @(s.Status == "Graded" ? "bg-success" : "bg-warning text-dark")">@s.Status</span>
+                            </td>
+                            <td>@(s.Marks.HasValue ? s.Marks.Value.ToString("0.##") + " / 100" : "-")</td>
+                            <td>
+                                <a asp-action="Grade" asp-route-id="@s.SubmissionId" class="btn btn-sm btn-outline-primary">
+                                    @(s.Status == "Graded" ? "Update Grade" : "Grade")
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

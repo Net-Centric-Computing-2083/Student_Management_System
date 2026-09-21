@@ -1,0 +1,59 @@
+@model StudentManagementSystem.Models.Assignment
+
+@{
+    ViewData["Title"] = "Submit Assignment";
+}
+
+<div class="container mt-4">
+
+    <h1 class="fw-bold">Submit Assignment</h1>
+
+    <p class="text-muted">
+        @Model.Title
+        &middot;
+        @Model.Course?.CourseName
+        &middot;
+        Due @Model.DueDate.ToString("MMM dd, yyyy h:mm tt")
+    </p>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form asp-action="Submit"
+          asp-route-id="@Model.AssignmentId"
+          method="post"
+          style="max-width:700px;">
+
+        <div class="mb-3">
+            <label for="SubmissionText"
+                   class="form-label">
+                Your Submission
+            </label>
+
+            <textarea name="SubmissionText"
+                      id="SubmissionText"
+                      class="form-control"
+                      rows="8"
+                      required></textarea>
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Submit
+        </button>
+
+        <a asp-action="StudentDetails"
+           asp-route-id="@Model.AssignmentId"
+           class="btn btn-outline-secondary">
+            Cancel
+        </a>
+    </form>
+
+</div>

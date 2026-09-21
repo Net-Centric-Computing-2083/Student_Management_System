@@ -1,0 +1,70 @@
+@model List<StudentManagementSystem.Models.LeaveRequest>
+
+@{
+    ViewData["Title"] = "Leave Requests";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Leave Requests</h1>
+    <p class="text-muted">General leave requests not tied to a specific course. Course-specific requests are handled by the course's teacher.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No general leave requests found.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Requested</th>
+                        <th>Student</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in Model)
+                    {
+                        <tr>
+                            <td>@l.RequestDate.ToString("MMM dd, yyyy")</td>
+                            <td>@l.Student?.Name</td>
+                            <td>@l.StartDate.ToString("MMM dd, yyyy")</td>
+                            <td>@l.EndDate.ToString("MMM dd, yyyy")</td>
+                            <td>@l.Reason</td>
+                            <td>
+                                @{
+                                    var badgeClass = l.Status switch
+                                    {
+                                        "Approved" => "bg-success",
+                                        "Rejected" => "bg-danger",
+                                        _ => "bg-warning text-dark"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@l.Status</span>
+                            </td>
+                            <td>
+                                @if (l.Status == "Pending")
+                                {
+                                    <form asp-action="ReviewLeaveRequest" asp-route-id="@l.LeaveRequestId" method="post" class="d-flex gap-1">
+                                        <input type="text" name="comment" class="form-control form-control-sm" placeholder="Comment (optional)" style="width:150px;" />
+                                        <button type="submit" name="decision" value="Approved" class="btn btn-sm btn-success">Approve</button>
+                                        <button type="submit" name="decision" value="Rejected" class="btn btn-sm btn-danger">Reject</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">@l.ReviewComment</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

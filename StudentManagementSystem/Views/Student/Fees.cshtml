@@ -1,0 +1,90 @@
+@model List<StudentManagementSystem.Models.Fee>
+
+@{
+    ViewData["Title"] = "Fees / Payments";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Fees / Payments</h1>
+    <p class="text-muted">Your fee balance and payment history.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No fee records are available yet.</div>
+    }
+    else
+    {
+        @foreach (var fee in Model)
+        {
+            <div class="card shadow-sm mb-3">
+                <div class="card-header d-flex justify-content-between">
+                    <span class="fw-bold">@fee.Semester?.SemesterName (@fee.Semester?.AcademicYear)</span>
+                    <span>
+                        @if (fee.RemainingBalance <= 0)
+                        {
+                            <span class="badge bg-success">Fully Paid</span>
+                        }
+                        else if (fee.DueDate < DateTime.Today)
+                        {
+                            <span class="badge bg-danger">Overdue</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Due @fee.DueDate.ToString("MMM dd, yyyy")</span>
+                        }
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <div class="text-muted small">Total Fee</div>
+                            <div class="fw-bold">@fee.TotalAmount.ToString("N2")</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Paid</div>
+                            <div class="fw-bold text-success">@fee.PaidAmount.ToString("N2")</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Remaining</div>
+                            <div class="fw-bold text-danger">@fee.RemainingBalance.ToString("N2")</div>
+                        </div>
+                    </div>
+
+                    @if (fee.Payments.Any())
+                    {
+                        <h6>Payment History</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Reference No.</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var p in fee.Payments.OrderByDescending(p => p.PaymentDate))
+                                    {
+                                        <tr>
+                                            <td>@p.PaymentDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@p.AmountPaid.ToString("N2")</td>
+                                            <td>@p.PaymentMethod</td>
+                                            <td>@p.ReferenceNumber</td>
+                                            <td>@p.Status</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No payments recorded yet for this semester.</p>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

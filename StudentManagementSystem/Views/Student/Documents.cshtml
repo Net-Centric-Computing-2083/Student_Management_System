@@ -1,0 +1,44 @@
+@model List<StudentManagementSystem.Models.Document>
+
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Documents</h1>
+    <p class="text-muted">Certificates and academic documents available to you.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No documents have been uploaded for you yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Uploaded</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+                            <td>@d.Title</td>
+                            <td><span class="badge bg-secondary">@d.DocumentType</span></td>
+                            <td>@d.UploadedDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a asp-action="DownloadDocument" asp-route-id="@d.DocumentId"
+                                   class="btn btn-sm btn-outline-primary">Download</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

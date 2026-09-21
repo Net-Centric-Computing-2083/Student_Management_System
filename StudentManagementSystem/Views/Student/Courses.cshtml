@@ -1,0 +1,9 @@
+@model IEnumerable<StudentManagementSystem.Models.Enrollment>
+@{ ViewData["Title"] = "My Courses"; }
+<div class="container mt-4">
+    <h2>My Courses</h2>
+    <p class="text-muted">Courses associated with your logged-in student profile.</p>
+    @if (!Model.Any()) { <div class="alert alert-info">You are not enrolled in any courses yet.</div> }
+    else { <div class="table-responsive"><table class="table table-hover"><thead class="table-dark"><tr><th>Code</th><th>Course</th><th>Credits</th><th>Semester</th><th>Status</th><th>Materials</th></tr></thead><tbody>@foreach(var e in Model){<tr><td>@e.Course?.CourseCode</td><td>@e.Course?.CourseName</td><td>@e.Course?.CreditHours</td><td>@e.Semester?.AcademicYear - @e.Semester?.SemesterName</td><td>@e.Status</td><td><a asp-action="CourseMaterials" asp-route-courseId="@e.CourseId" class="btn btn-sm btn-outline-secondary">View</a></td></tr>}</tbody></table></div> }
+    <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+</div>

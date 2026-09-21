@@ -1,0 +1,59 @@
+@model List<StudentManagementSystem.Models.LeaveRequest>
+
+@{
+    ViewData["Title"] = "Leave Requests";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="fw-bold">Leave Requests</h1>
+        <a asp-action="CreateLeaveRequest" class="btn btn-primary">+ New Leave Request</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">You haven't submitted any leave requests yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Requested</th>
+                        <th>Course</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Response</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var l in Model)
+                    {
+                        <tr>
+                            <td>@l.RequestDate.ToString("MMM dd, yyyy")</td>
+                            <td>@(l.Course?.CourseName ?? "General")</td>
+                            <td>@l.StartDate.ToString("MMM dd, yyyy")</td>
+                            <td>@l.EndDate.ToString("MMM dd, yyyy")</td>
+                            <td>@l.Reason</td>
+                            <td>
+                                @{
+                                    var badgeClass = l.Status switch
+                                    {
+                                        "Approved" => "bg-success",
+                                        "Rejected" => "bg-danger",
+                                        _ => "bg-warning text-dark"
+                                    };
+                                }
+                                <span class="badge @badgeClass">@l.Status</span>
+                            </td>
+                            <td>@l.ReviewComment</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

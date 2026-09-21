@@ -1,0 +1,85 @@
+@model StudentManagementSystem.ViewModels.SecurityOverviewViewModel
+
+@{
+    ViewData["Title"] = "Security";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Security</h1>
+    <p class="text-muted">Account security overview and role-based access summary.</p>
+
+    <div class="row g-3 mt-1">
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Total Accounts</div>
+                    <div class="fs-3 fw-bold">@Model.TotalUsers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Locked Out</div>
+                    <div class="fs-3 fw-bold text-danger">@Model.LockedOutUsers</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Admins</div>
+                    <div class="fs-3 fw-bold">@Model.AdminCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Teachers / Students</div>
+                    <div class="fs-3 fw-bold">@Model.TeacherCount / @Model.StudentCount</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-header fw-bold">Role-Based Access</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Role</th>
+                            <th>Can access</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-semibold">Admin</td>
+                            <td>Full system/institution management — students, teachers, users &amp; roles, departments, courses, course assignment, fees, documents, announcements, class schedules, leave requests, reports, and system settings.</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold">Teacher</td>
+                            <td>Their own assigned courses and enrolled students only — assignments, grading, attendance, course-level announcements, course materials, and leave/message replies scoped to their courses.</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold">Student</td>
+                            <td>Their own academic record only — courses, results, attendance, assignments, fees, documents, and communication with their own teachers.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-muted small mt-3 mb-0">
+                Every controller action enforces role access server-side with <code>[Authorize(Roles = "...")]</code>
+                and resolves "my own data" through the signed-in account, so a role can never reach another role's
+                pages or another user's records by entering a URL directly.
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Users" class="btn btn-primary">Manage Users &amp; Roles</a>
+        <span class="text-muted ms-2 small">Activate/deactivate accounts and assign roles from there.</span>
+    </div>
+</div>

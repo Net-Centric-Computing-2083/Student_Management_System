@@ -10,52 +10,34 @@
 
 <dl class="row">
 
-    <dt class="col-sm-3">
-        Student
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Student?.Name
-    </dd>
+    <dt class="col-sm-3">Student</dt>
+    <dd class="col-sm-9">@Model.Student?.Name</dd>
 
-    <dt class="col-sm-3">
-        Course
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Course?.CourseName
-    </dd>
+    <dt class="col-sm-3">Course</dt>
+    <dd class="col-sm-9">@Model.Course?.CourseName</dd>
 
-    <dt class="col-sm-3">
-        Marks
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Marks
-    </dd>
+    <dt class="col-sm-3">Internal</dt>
+    <dd class="col-sm-9">@Model.InternalMarks</dd>
 
-    <dt class="col-sm-3">
-        Grade
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Grade
-    </dd>
+    <dt class="col-sm-3">Practical</dt>
+    <dd class="col-sm-9">@Model.PracticalMarks</dd>
 
-    <dt class="col-sm-3">
-        Result Date
-    </dt>
-    <dd class="col-sm-9">
-        @Model.ResultDate.ToString("yyyy-MM-dd")
-    </dd>
+    <dt class="col-sm-3">Final</dt>
+    <dd class="col-sm-9">@Model.FinalMarks</dd>
+
+    <dt class="col-sm-3">Total</dt>
+    <dd class="col-sm-9">@Model.TotalMarks</dd>
+
+    <dt class="col-sm-3">Grade</dt>
+    <dd class="col-sm-9">@Model.Grade</dd>
+
+    <dt class="col-sm-3">GPA</dt>
+    <dd class="col-sm-9">@Model.GPA</dd>
+
+    <dt class="col-sm-3">Result Date</dt>
+    <dd class="col-sm-9">@Model.ResultDate.ToString("yyyy-MM-dd")</dd>
 
 </dl>
 
-<div>
-    <a asp-action="Edit"
-       asp-route-id="@Model.ResultId"
-       class="btn btn-warning">
-        Edit
-    </a>
-
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Back to Results
-    </a>
-</div>
+<a asp-action="Edit" asp-route-id="@Model.ResultId" class="btn btn-warning">Edit</a>
+<a asp-action="Index" class="btn btn-secondary">Back</a>

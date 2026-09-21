@@ -1,0 +1,53 @@
+@model List<StudentManagementSystem.Models.CourseMaterial>
+
+@{
+    ViewData["Title"] = "Course Materials";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="fw-bold">Course Materials</h1>
+        <a asp-action="CreateCourseMaterial" class="btn btn-primary">+ Upload Material</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">You haven't uploaded any course materials yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Course</th>
+                        <th>Description</th>
+                        <th>Uploaded</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td>@m.Title</td>
+                            <td>@m.Course?.CourseName</td>
+                            <td>@m.Description</td>
+                            <td>@m.UploadedDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a asp-action="DownloadCourseMaterial" asp-route-id="@m.CourseMaterialId"
+                                   class="btn btn-sm btn-outline-primary">Download</a>
+                                <form asp-action="DeleteCourseMaterial" asp-route-id="@m.CourseMaterialId"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('Delete this material?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

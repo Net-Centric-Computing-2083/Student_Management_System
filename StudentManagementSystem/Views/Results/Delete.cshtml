@@ -12,55 +12,25 @@
 
 <dl class="row">
 
-    <dt class="col-sm-3">
-        Student
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Student?.Name
-    </dd>
+    <dt class="col-sm-3">Student</dt>
+    <dd class="col-sm-9">@Model.Student?.Name</dd>
 
-    <dt class="col-sm-3">
-        Course
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Course?.CourseName
-    </dd>
+    <dt class="col-sm-3">Course</dt>
+    <dd class="col-sm-9">@Model.Course?.CourseName</dd>
 
-    <dt class="col-sm-3">
-        Marks
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Marks
-    </dd>
+    <dt class="col-sm-3">Total Marks</dt>
+    <dd class="col-sm-9">@Model.TotalMarks</dd>
 
-    <dt class="col-sm-3">
-        Grade
-    </dt>
-    <dd class="col-sm-9">
-        @Model.Grade
-    </dd>
-
-    <dt class="col-sm-3">
-        Result Date
-    </dt>
-    <dd class="col-sm-9">
-        @Model.ResultDate.ToString("yyyy-MM-dd")
-    </dd>
+    <dt class="col-sm-3">Grade</dt>
+    <dd class="col-sm-9">@Model.Grade</dd>
 
 </dl>
 
-<form asp-action="Delete" method="post">
+<form asp-action="Delete">
 
-    <input type="hidden"
-           asp-for="ResultId" />
+    <input type="hidden" asp-for="ResultId" />
 
-    <input type="submit"
-           value="Delete"
-           class="btn btn-danger" />
-
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Cancel
-    </a>
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 
 </form>

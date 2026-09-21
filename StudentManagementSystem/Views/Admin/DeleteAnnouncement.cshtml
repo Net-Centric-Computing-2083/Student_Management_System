@@ -1,0 +1,22 @@
+@model StudentManagementSystem.Models.Announcement
+
+@{
+    ViewData["Title"] = "Delete Announcement";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold text-danger">Delete Announcement</h1>
+
+    <div class="card shadow-sm" style="max-width:600px;">
+        <div class="card-body">
+            <h5>@Model.Title</h5>
+            <p class="text-muted">@Model.CreatedDate.ToString("MMM dd, yyyy") &middot; Visible to: @Model.TargetRole</p>
+            <p>@Model.Content</p>
+        </div>
+    </div>
+
+    <form asp-action="DeleteAnnouncement" asp-route-id="@Model.AnnouncementId" method="post" class="mt-3">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Announcements" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

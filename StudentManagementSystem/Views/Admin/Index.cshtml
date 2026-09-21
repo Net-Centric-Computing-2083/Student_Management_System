@@ -1,0 +1,99 @@
+@model StudentManagementSystem.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container mt-4">
+
+    <h1 class="fw-bold">Admin Dashboard</h1>
+    <p class="text-muted mb-0">System overview and management shortcuts.</p>
+
+    <div class="row g-3 mt-2">
+        @foreach (var item in new[] {
+            ("Students", Model.TotalStudents, "Student", "Index"),
+            ("Teachers", Model.TotalTeachers, "Admin", "Teachers"),
+            ("Departments", Model.TotalDepartments, "Department", "Index"),
+            ("Courses", Model.TotalCourses, "Course", "Index"),
+            ("Enrollments", Model.TotalEnrollments, "Enrollment", "Index"),
+            ("Attendance Records", Model.TotalAttendance, "Attendance", "History"),
+            ("Results", Model.TotalResults, "Results", "Index"),
+        })
+        {
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h6 class="text-muted">@item.Item1</h6>
+                        <h2>@item.Item2</h2>
+                        <a asp-controller="@item.Item3" asp-action="@item.Item4" class="btn btn-outline-primary btn-sm">Manage</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100 border-warning">
+                <div class="card-body">
+                    <h6 class="text-muted">Pending Leave Requests</h6>
+                    <h2>@Model.PendingLeaveRequests</h2>
+                    <a asp-action="LeaveRequests" class="btn btn-outline-warning btn-sm">Review</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="text-muted">New Contact Messages</h6>
+                    <h2>@Model.NewContactMessages</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Recent Activity</div>
+                <div class="card-body">
+                    @if (!Model.RecentActivity.Any())
+                    {
+                        <p class="text-muted mb-0">No recent activity.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var a in Model.RecentActivity)
+                            {
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>@a.Description</span>
+                                    <span class="text-muted small">@a.When.ToString("MMM dd, h:mm tt")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Quick Links</div>
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <a asp-action="Teachers" class="btn btn-sm btn-outline-secondary">Teachers</a>
+                    <a asp-action="Users" class="btn btn-sm btn-outline-secondary">Users &amp; Roles</a>
+                    <a asp-action="ClassSchedules" class="btn btn-sm btn-outline-secondary">Course Assignment</a>
+                    <a asp-action="Assignments" class="btn btn-sm btn-outline-secondary">Assignments</a>
+                    <a asp-action="Announcements" class="btn btn-sm btn-outline-secondary">Announcements</a>
+                    <a asp-action="Fees" class="btn btn-sm btn-outline-secondary">Fees / Payments</a>
+                    <a asp-action="Documents" class="btn btn-sm btn-outline-secondary">Documents</a>
+                    <a asp-action="SendNotifications" class="btn btn-sm btn-outline-secondary">Send Notification</a>
+                    <a asp-action="LeaveRequests" class="btn btn-sm btn-outline-secondary">Leave Requests</a>
+                    <a asp-action="Reports" class="btn btn-sm btn-outline-secondary">Reports &amp; Analytics</a>
+                    <a asp-action="Semesters" class="btn btn-sm btn-outline-secondary">System Settings</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
