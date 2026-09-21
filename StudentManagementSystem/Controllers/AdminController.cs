@@ -529,9 +529,9 @@ namespace Student_Management_System.Controllers
         // =========================================================
 
         public async Task<IActionResult> ClassSchedules(
-            int? teacherId,
-            int? courseId,
-            int? semesterId)
+           int? teacherId,
+           int? courseId,
+           int? semesterId)
         {
             var query = _context.ClassSchedules
                 .Include(cs => cs.Course)
@@ -540,9 +540,14 @@ namespace Student_Management_System.Controllers
                 .AsNoTracking()
                 .AsQueryable();
 
-            if (teacherId.HasValue) query = query.Where(cs => cs.TeacherId == teacherId.Value);
-            if (courseId.HasValue) query = query.Where(cs => cs.CourseId == courseId.Value);
-            if (semesterId.HasValue) query = query.Where(cs => cs.SemesterId == semesterId.Value);
+            if (teacherId.HasValue)
+                query = query.Where(cs => cs.TeacherId == teacherId.Value);
+
+            if (courseId.HasValue)
+                query = query.Where(cs => cs.CourseId == courseId.Value);
+
+            if (semesterId.HasValue)
+                query = query.Where(cs => cs.SemesterId == semesterId.Value);
 
             var list = await query
                 .OrderBy(cs => cs.DayOfWeek)
@@ -550,12 +555,20 @@ namespace Student_Management_System.Controllers
                 .ToListAsync();
 
             ViewBag.Teachers = new SelectList(
-                await _context.Teachers.OrderBy(t => t.Name).ToListAsync(),
-                "TeacherId", "Name", teacherId);
+                await _context.Teachers
+                    .OrderBy(t => t.Name)
+                    .ToListAsync(),
+                "TeacherId",
+                "Name",
+                teacherId);
 
             ViewBag.Courses = new SelectList(
-                await _context.Courses.OrderBy(c => c.CourseName).ToListAsync(),
-                "CourseId", "CourseName", courseId);
+                await _context.Courses
+                    .OrderBy(c => c.CourseName)
+                    .ToListAsync(),
+                "CourseId",
+                "CourseName",
+                courseId);
 
             ViewBag.Semesters = await BuildSemesterSelectListAsync(semesterId);
 

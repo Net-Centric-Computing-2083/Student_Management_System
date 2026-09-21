@@ -1,98 +1,197 @@
-@model StudentManagementSystem.Models.ClassSchedule
-@using Microsoft.AspNetCore.Mvc.Rendering
+@model IEnumerable<StudentManagementSystem.Models.ClassSchedule>
 
 @{
-    ViewData["Title"] = "New Class Schedule Entry";
+    ViewData["Title"] = "Class Schedules";
 }
 
 <div class="container mt-4">
-    <h1 class="fw-bold">New Class Schedule Entry</h1>
 
-    <form asp-action="CreateClassSchedule" method="post" style="max-width:600px;">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        <div class="mb-3">
-            <label asp-for="CourseId" class="form-label">Course</label>
-            <select asp-for="CourseId"
-                    asp-items="@(ViewData["CourseId"] as SelectList)"
-                    class="form-select">
-                <option value="">-- Select a course --</option>
-            </select>
-            <span asp-validation-for="CourseId" class="text-danger"></span>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold">Class Schedules</h1>
+            <p class="text-muted mb-0">
+                Manage course, teacher, semester and class schedules.
+            </p>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="TeacherId" class="form-label">Teacher</label>
-            <select asp-for="TeacherId"
-                    asp-items="@(ViewData["TeacherId"] as SelectList)"
-                    class="form-select">
-                <option value="">-- Select a teacher --</option>
-            </select>
-            <span asp-validation-for="TeacherId" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="SemesterId" class="form-label">Semester</label>
-            <select asp-for="SemesterId"
-                    asp-items="@(ViewData["SemesterId"] as SelectList)"
-                    class="form-select">
-                <option value="">-- Select a semester --</option>
-            </select>
-            <span asp-validation-for="SemesterId" class="text-danger"></span>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="DayOfWeek" class="form-label">Day</label>
-            <select asp-for="DayOfWeek" class="form-select">
-                <option value="">-- Select a day --</option>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
-            </select>
-            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
-        </div>
-
-        <div class="row">
-            <div class="col mb-3">
-                <label asp-for="StartTime" class="form-label">Start Time</label>
-                <input asp-for="StartTime"
-                       type="time"
-                       class="form-control" />
-                <span asp-validation-for="StartTime" class="text-danger"></span>
-            </div>
-
-            <div class="col mb-3">
-                <label asp-for="EndTime" class="form-label">End Time</label>
-                <input asp-for="EndTime"
-                       type="time"
-                       class="form-control" />
-                <span asp-validation-for="EndTime" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Room" class="form-label">Room</label>
-            <input asp-for="Room" class="form-control" />
-            <span asp-validation-for="Room" class="text-danger"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary">
-            Create
-        </button>
-
-        <a asp-action="ClassSchedules"
-           class="btn btn-outline-secondary">
-            Cancel
+        <a asp-action="CreateClassSchedule"
+           class="btn btn-primary">
+            + Create Class Schedule
         </a>
-    </form>
-</div>
+    </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <form asp-action="ClassSchedules"
+                  method="get">
+
+                <div class="row g-3">
+
+                    <!-- Teacher -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Teacher
+                        </label>
+
+                        <select name="teacherId"
+                                class="form-select"
+                                asp-items="ViewBag.Teachers">
+                            <option value="">-- All Teachers --</option>
+                        </select>
+                    </div>
+
+                    <!-- Course -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Course
+                        </label>
+
+                        <select name="courseId"
+                                class="form-select"
+                                asp-items="ViewBag.Courses">
+                            <option value="">-- All Courses --</option>
+                        </select>
+                    </div>
+
+                    <!-- Semester -->
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">
+                            Semester
+                        </label>
+
+                        <select name="semesterId"
+                                class="form-select"
+                                asp-items="ViewBag.Semesters">
+                            <option value="">-- All Semesters --</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Filter
+                    </button>
+
+                    <a asp-action="ClassSchedules"
+                       class="btn btn-outline-secondary">
+                        Clear
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Schedule List -->
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover align-middle">
+
+                        <thead class="table-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Course</th>
+                                <th>Teacher</th>
+                                <th>Semester</th>
+                                <th>Day</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Room</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @{
+                                int count = 1;
+                            }
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @count
+                                    </td>
+
+                                    <td>
+                                        @item.Course?.CourseName
+                                    </td>
+
+                                    <td>
+                                        @item.Teacher?.Name
+                                    </td>
+
+                                    <td>
+                                        @item.Semester?.SemesterName
+                                    </td>
+
+                                    <td>
+                                        @item.DayOfWeek
+                                    </td>
+
+                                    <td>
+                                        @item.StartTime
+                                    </td>
+
+                                    <td>
+                                        @item.EndTime
+                                    </td>
+
+                                    <td>
+                                        @item.Room
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex gap-1">
+
+                                            <a asp-action="EditClassSchedule"
+                                               asp-route-id="@item.ClassScheduleId"
+                                               class="btn btn-sm btn-warning">
+                                                Edit
+                                            </a>
+
+                                            <a asp-action="DeleteClassSchedule"
+                                               asp-route-id="@item.ClassScheduleId"
+                                               class="btn btn-sm btn-danger">
+                                                Delete
+                                            </a>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                                count++;
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    No class schedules found.
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

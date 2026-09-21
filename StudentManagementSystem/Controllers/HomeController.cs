@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.ViewModels;
 
 namespace StudentManagementSystem.Controllers
 {
@@ -16,7 +17,7 @@ namespace StudentManagementSystem.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var dashboard = new DashboardViewModel
+            var model = new HomeViewModel
             {
                 TotalStudents = await _context.Students.CountAsync(),
 
@@ -26,7 +27,7 @@ namespace StudentManagementSystem.Controllers
                     .ToListAsync()
             };
 
-            return View(dashboard);
+            return View(model);
         }
 
         public IActionResult Privacy()

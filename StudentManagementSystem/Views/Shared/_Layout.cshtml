@@ -3,84 +3,312 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>@ViewData["Title"] - Student Management System</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
 </head>
+
 <body>
 
-@if (User.Identity?.IsAuthenticated == true)
-{
-    <div class="app-shell">
-        <aside class="app-sidebar desktop-only d-none d-md-flex flex-md-column">
-            <a class="sidebar-brand" asp-controller="Home" asp-action="Index">Student Management System</a>
-            @await Html.PartialAsync("_SidebarNav")
-        </aside>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <!-- ========================================================= -->
+        <!-- AUTHENTICATED USER LAYOUT                                 -->
+        <!-- ========================================================= -->
 
-        <div class="app-main">
-            <nav class="app-topbar navbar navbar-light d-flex align-items-center">
-                <button class="sidebar-toggle-btn d-md-none me-2" type="button"
-                        data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
-                    &#9776;
+        <div class="app-shell">
+
+            <!-- Desktop Sidebar -->
+            <aside class="app-sidebar desktop-only d-none d-md-flex flex-md-column">
+
+                <a class="sidebar-brand"
+                   asp-controller="Home"
+                   asp-action="Index">
+                    Student Management System
+                </a>
+
+                @await Html.PartialAsync("_SidebarNav")
+
+            </aside>
+
+
+            <!-- Main Application Area -->
+            <div class="app-main">
+
+                <!-- Top Navigation -->
+                <nav class="app-topbar navbar navbar-light d-flex align-items-center">
+
+                    <!-- Mobile Sidebar Button -->
+                    <button class="sidebar-toggle-btn d-md-none me-2"
+                            type="button"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#mobileSidebar">
+
+                        &#9776;
+
+                    </button>
+
+
+                    <!-- Mobile Brand -->
+                    <a class="navbar-brand fw-bold d-md-none mb-0"
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        SMS
+
+                    </a>
+
+
+                    <!-- User Information -->
+                    <div class="ms-auto d-flex align-items-center gap-3">
+
+                        <span class="text-muted small">
+                            @User.Identity.Name
+                        </span>
+
+                        <form asp-controller="Account"
+                              asp-action="Logout"
+                              method="post"
+                              class="d-none d-md-block">
+
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-secondary">
+
+                                Logout
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </nav>
+
+
+                <!-- Application Content -->
+                <main class="app-content container-fluid py-4">
+
+                    @if (TempData["DeleteError"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["DeleteError"]
+                        </div>
+                    }
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">
+                            @TempData["Success"]
+                        </div>
+                    }
+
+                    @RenderBody()
+
+                </main>
+
+
+                <!-- Footer -->
+                <footer class="border-top footer text-muted">
+
+                    <div class="container-fluid py-3">
+                        &copy; 2026 - Student Management System
+                    </div>
+
+                </footer>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================================= -->
+        <!-- MOBILE SIDEBAR                                            -->
+        <!-- ========================================================= -->
+
+        <div class="offcanvas offcanvas-start"
+             tabindex="-1"
+             id="mobileSidebar">
+
+            <div class="offcanvas-header">
+
+                <h5 class="offcanvas-title">
+                    Menu
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="offcanvas">
                 </button>
-                <a class="navbar-brand fw-bold d-md-none mb-0" asp-controller="Home" asp-action="Index">SMS</a>
-                <div class="ms-auto d-flex align-items-center gap-3">
-                    <span class="text-muted small">@User.Identity.Name</span>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-none d-md-block">
-                        <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
-                    </form>
+
+            </div>
+
+            <div class="offcanvas-body">
+
+                @await Html.PartialAsync("_SidebarNav")
+
+            </div>
+
+        </div>
+    }
+
+    else
+    {
+        <!-- ========================================================= -->
+        <!-- PUBLIC / LANDING PAGE LAYOUT                              -->
+        <!-- ========================================================= -->
+
+        <header>
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+
+                <div class="container-fluid">
+
+                    <!-- Brand -->
+                    <a class="navbar-brand fw-bold"
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        🎓 Student Management System
+
+                    </a>
+
+
+                    <!-- Public Navigation -->
+                    <div class="d-flex align-items-center gap-3 ms-auto">
+
+                        <!-- Home -->
+                        <a class="nav-link"
+                           asp-controller="Home"
+                           asp-action="Index">
+
+                            Home
+
+                        </a>
+
+
+                        <!-- About -->
+                        <a class="nav-link"
+                           href="#about-section">
+
+                            About
+
+                        </a>
+
+
+                        <!-- Features -->
+                        <a class="nav-link"
+                           href="#features-section">
+
+                            Features
+
+                        </a>
+
+
+                        <!-- Login -->
+                        <a class="btn btn-primary px-4"
+                           href="#login-section">
+
+                            Login
+
+                        </a>
+
+                    </div>
+
                 </div>
+
             </nav>
 
-            <main class="app-content container-fluid py-4">
-                @if (TempData["DeleteError"] != null) { <div class="alert alert-danger">@TempData["DeleteError"]</div> }
-                @if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
-                @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
-                @if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
-                @RenderBody()
-            </main>
+        </header>
 
-            <footer class="border-top footer text-muted"><div class="container-fluid py-3">&copy; 2026 - Student Management System</div></footer>
-        </div>
-    </div>
 
-    <!-- Mobile sidebar (offcanvas) -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">Menu</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body">
-            @await Html.PartialAsync("_SidebarNav")
-        </div>
-    </div>
-}
-else
-{
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" asp-controller="Home" asp-action="Index">Student Management System</a>
-                <div class="d-flex ms-auto">
-                    <a class="btn btn-link" asp-controller="Account" asp-action="Login">Login</a>
-                    <a class="btn btn-link" asp-controller="Account" asp-action="Register">Register</a>
+        <!-- ========================================================= -->
+        <!-- PUBLIC PAGE CONTENT                                       -->
+        <!-- ========================================================= -->
+
+        <main class="container-fluid p-0">
+
+            @if (TempData["DeleteError"] != null)
+            {
+                <div class="alert alert-danger m-3">
+                    @TempData["DeleteError"]
                 </div>
-            </div>
-        </nav>
-    </header>
-    <main class="container py-4">
-        @if (TempData["DeleteError"] != null) { <div class="alert alert-danger">@TempData["DeleteError"]</div> }
-        @if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
-        @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success">@TempData["SuccessMessage"]</div> }
-        @if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
-        @RenderBody()
-    </main>
-    <footer class="border-top footer text-muted"><div class="container py-3">&copy; 2026 - Student Management System</div></footer>
-}
+            }
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger m-3">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success m-3">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success m-3">
+                    @TempData["Success"]
+                </div>
+            }
+
+            @RenderBody()
+
+        </main>
+
+
+        <!-- ========================================================= -->
+        <!-- PUBLIC FOOTER                                             -->
+        <!-- ========================================================= -->
+
+        <footer class="border-top footer text-muted">
+
+            <div class="container py-3 text-center">
+
+                &copy; 2026 - Student Management System
+
+            </div>
+
+        </footer>
+    }
+
+
+    <!-- ============================================================= -->
+    <!-- JAVASCRIPT                                                    -->
+    <!-- ============================================================= -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

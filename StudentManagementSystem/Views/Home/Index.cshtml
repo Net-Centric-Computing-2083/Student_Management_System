@@ -1,157 +1,428 @@
-﻿@model StudentManagementSystem.Models.DashboardViewModel
+﻿@model StudentManagementSystem.ViewModels.HomeViewModel
 
 @{
-    ViewData["Title"] = "Dashboard";
+    ViewData["Title"] = "Welcome";
 }
 
-<div class="dashboard-page">
+<div class="portal-page">
 
-    <!-- Dashboard Header -->
-    <div class="dashboard-header">
-        <div>
-            <h1>Student Management System</h1>
-            <p>Welcome to your student management dashboard.</p>
-        </div>
+    <!-- ========================================================= -->
+    <!-- HERO / HOME SECTION                                       -->
+    <!-- ========================================================= -->
 
-        <a asp-controller="Student"
-           asp-action="Create"
-           class="dashboard-add-btn">
-            + Add Student
-        </a>
-    </div>
+    <section class="hero-section" id="home-section">
 
-    <!-- Statistics -->
-    <div class="dashboard-stats">
+        <div class="hero-content">
 
-        <div class="stat-card">
-            <div class="stat-icon">👨‍🎓</div>
+            <!-- Left Side -->
+            <div class="hero-text">
 
-            <div>
-                <span>Total Students</span>
-                <h2>@Model.TotalStudents</h2>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon">📚</div>
-
-            <div>
-                <span>Student Module</span>
-                <h2>Active</h2>
-            </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon">🔎</div>
-
-            <div>
-                <span>Student Search</span>
-                <h2>Available</h2>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="dashboard-card">
-
-        <div class="dashboard-card-header">
-            <div>
-                <h2>Quick Actions</h2>
-                <p>Common student management operations</p>
-            </div>
-        </div>
-
-        <div class="quick-actions">
-
-            <a asp-controller="Student"
-               asp-action="Create"
-               class="quick-action">
-                <span>➕</span>
-                <div>
-                    <strong>Add Student</strong>
-                    <small>Register a new student</small>
+                <div class="brand-badge">
+                    <span class="brand-icon">🎓</span>
+                    Student Management System
                 </div>
-            </a>
 
-            <a asp-controller="Student"
-               asp-action="Index"
-               class="quick-action">
-                <span>👨‍🎓</span>
-                <div>
-                    <strong>View Students</strong>
-                    <small>Manage registered students</small>
+                <h1>
+                    Your Academic Journey,
+                    <span>Simplified.</span>
+                </h1>
+
+                <p class="hero-description">
+                    A centralized platform to manage students, courses,
+                    attendance, results, assignments and academic activities
+                    efficiently.
+                </p>
+
+                <div class="feature-list">
+
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Student Management</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Courses & Enrollment</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Attendance & Results</span>
+                    </div>
+
+                    <div class="feature-item">
+                        <span class="feature-icon">✓</span>
+                        <span>Assignments & Academic Activities</span>
+                    </div>
+
                 </div>
-            </a>
 
-        </div>
-
-    </div>
-
-    <!-- Recent Students -->
-    <div class="dashboard-card">
-
-        <div class="dashboard-card-header">
-            <div>
-                <h2>Recent Students</h2>
-                <p>Recently registered students</p>
             </div>
 
-            <a asp-controller="Student"
-               asp-action="Index"
-               class="view-all-link">
-                View All →
-            </a>
-        </div>
 
-        @if (!Model.RecentStudents.Any())
-        {
-            <div class="dashboard-empty">
-                <div>👨‍🎓</div>
-                <h3>No Students Yet</h3>
-                <p>Start by registering your first student.</p>
+            <!-- ================================================= -->
+            <!-- LOGIN CARD                                        -->
+            <!-- ================================================= -->
 
-                <a asp-controller="Student"
-                   asp-action="Create"
-                   class="dashboard-add-btn">
-                    Add Student
-                </a>
-            </div>
-        }
-        else
-        {
-            <div class="recent-students-list">
+            <div class="login-wrapper" id="login-section">
 
-                @foreach (var student in Model.RecentStudents)
-                {
-                    <div class="recent-student">
+                <div class="login-card">
 
-                        <div class="recent-avatar">
-                            @student.Name.Substring(0, 1).ToUpper()
+                    <div class="login-header">
+
+                        <div class="login-icon">
+                            🔐
                         </div>
 
-                        <div class="recent-info">
-                            <strong>@student.Name</strong>
-                            <span>@student.Email</span>
-                        </div>
+                        <h2>Welcome Back</h2>
 
-                        <div class="recent-id">
-                            #@student.StudentId
-                        </div>
-
-                        <a asp-controller="Student"
-                           asp-action="Details"
-                           asp-route-id="@student.StudentId"
-                           class="recent-view">
-                            View
-                        </a>
+                        <p>
+                            Sign in to access your account
+                        </p>
 
                     </div>
-                }
+
+
+                    <!-- LOGIN FORM -->
+                    <form asp-controller="Account"
+                          asp-action="Login"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger validation-summary">
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="input-group">
+
+                            <label for="Email">
+                                Email Address
+                            </label>
+
+                            <input type="email"
+                                   id="Email"
+                                   name="Email"
+                                   class="login-input"
+                                   placeholder="Enter your email"
+                                   autocomplete="email"
+                                   required />
+
+                        </div>
+
+
+                        <!-- Password -->
+                        <div class="input-group">
+
+                            <label for="Password">
+                                Password
+                            </label>
+
+                            <input type="password"
+                                   id="Password"
+                                   name="Password"
+                                   class="login-input"
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password"
+                                   required />
+
+                        </div>
+
+
+                        <!-- Remember Me -->
+                        <div class="remember-row">
+
+                            <label class="remember-label">
+
+                                <input type="checkbox"
+                                       id="RememberMe"
+                                       name="RememberMe"
+                                       value="true" />
+
+                                <span>
+                                    Remember me
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <!-- Login Button -->
+                        <button type="submit"
+                                class="login-button">
+
+                            Sign In
+
+                            <span class="button-arrow">
+                                →
+                            </span>
+
+                        </button>
+
+                    </form>
+
+                </div>
 
             </div>
-        }
 
-    </div>
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- ABOUT SECTION                                             -->
+    <!-- ========================================================= -->
+
+    <section id="about-section" class="about-section">
+
+        <div class="container py-5">
+
+            <div class="text-center mb-5">
+
+                <h2 class="fw-bold">
+                    About Student Management System
+                </h2>
+
+                <p class="text-muted mt-3">
+                    A centralized academic management platform designed
+                    to simplify and organize educational activities.
+                </p>
+
+            </div>
+
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-9">
+
+                    <div class="card border-0 shadow-sm p-4">
+
+                        <p class="mb-3">
+                            The Student Management System provides a
+                            centralized platform for managing student
+                            information and academic activities.
+                        </p>
+
+                        <p class="mb-3">
+                            Administrators can manage students, teachers,
+                            courses, departments, semesters, attendance,
+                            results and other academic records from one
+                            centralized system.
+                        </p>
+
+                        <p class="mb-0">
+                            Teachers and students can access the features
+                            available to them according to their roles,
+                            making academic management more organized
+                            and efficient.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- FEATURES SECTION                                          -->
+    <!-- ========================================================= -->
+
+    <section id="features-section" class="features-section">
+
+        <div class="container py-5">
+
+            <div class="text-center mb-5">
+
+                <h2 class="fw-bold">
+                    System Features
+                </h2>
+
+                <p class="text-muted mt-3">
+                    Everything you need for organized academic management.
+                </p>
+
+            </div>
+
+
+            <div class="row g-4">
+
+                <!-- Student Management -->
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <div class="fs-1 mb-3">
+                            👨‍🎓
+                        </div>
+
+                        <h5 class="fw-bold">
+                            Student Management
+                        </h5>
+
+                        <p class="text-muted">
+                            Manage student profiles, records and academic
+                            information efficiently.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Courses -->
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <div class="fs-1 mb-3">
+                            📚
+                        </div>
+
+                        <h5 class="fw-bold">
+                            Courses & Enrollment
+                        </h5>
+
+                        <p class="text-muted">
+                            Organize courses, semesters and student
+                            enrollment information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Results -->
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <div class="fs-1 mb-3">
+                            📊
+                        </div>
+
+                        <h5 class="fw-bold">
+                            Results
+                        </h5>
+
+                        <p class="text-muted">
+                            Manage and track student academic results
+                            and performance.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Attendance -->
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+
+                        <div class="fs-1 mb-3">
+                            📅
+                        </div>
+
+                        <h5 class="fw-bold">
+                            Attendance
+                        </h5>
+
+                        <p class="text-muted">
+                            Monitor and maintain student attendance
+                            records.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ========================================================= -->
+    <!-- FEATURE BAR                                               -->
+    <!-- ========================================================= -->
+
+    <section class="feature-bar">
+
+        <div class="feature-stat">
+
+            <div class="stat-icon">
+                👨‍🎓
+            </div>
+
+            <div>
+                <strong>Students</strong>
+                <span>Manage student records</span>
+            </div>
+
+        </div>
+
+
+        <div class="feature-stat">
+
+            <div class="stat-icon">
+                📚
+            </div>
+
+            <div>
+                <strong>Courses</strong>
+                <span>Organize courses & enrollment</span>
+            </div>
+
+        </div>
+
+
+        <div class="feature-stat">
+
+            <div class="stat-icon">
+                📊
+            </div>
+
+            <div>
+                <strong>Results</strong>
+                <span>Track academic performance</span>
+            </div>
+
+        </div>
+
+
+        <div class="feature-stat">
+
+            <div class="stat-icon">
+                📅
+            </div>
+
+            <div>
+                <strong>Attendance</strong>
+                <span>Monitor attendance records</span>
+            </div>
+
+        </div>
+
+    </section>
 
 </div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}
