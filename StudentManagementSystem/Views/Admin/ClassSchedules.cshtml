@@ -1,0 +1,98 @@
+@model StudentManagementSystem.Models.ClassSchedule
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "New Class Schedule Entry";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">New Class Schedule Entry</h1>
+
+    <form asp-action="CreateClassSchedule" method="post" style="max-width:600px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="CourseId" class="form-label">Course</label>
+            <select asp-for="CourseId"
+                    asp-items="@(ViewData["CourseId"] as SelectList)"
+                    class="form-select">
+                <option value="">-- Select a course --</option>
+            </select>
+            <span asp-validation-for="CourseId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TeacherId" class="form-label">Teacher</label>
+            <select asp-for="TeacherId"
+                    asp-items="@(ViewData["TeacherId"] as SelectList)"
+                    class="form-select">
+                <option value="">-- Select a teacher --</option>
+            </select>
+            <span asp-validation-for="TeacherId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="SemesterId" class="form-label">Semester</label>
+            <select asp-for="SemesterId"
+                    asp-items="@(ViewData["SemesterId"] as SelectList)"
+                    class="form-select">
+                <option value="">-- Select a semester --</option>
+            </select>
+            <span asp-validation-for="SemesterId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DayOfWeek" class="form-label">Day</label>
+            <select asp-for="DayOfWeek" class="form-select">
+                <option value="">-- Select a day --</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+            <span asp-validation-for="DayOfWeek" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col mb-3">
+                <label asp-for="StartTime" class="form-label">Start Time</label>
+                <input asp-for="StartTime"
+                       type="time"
+                       class="form-control" />
+                <span asp-validation-for="StartTime" class="text-danger"></span>
+            </div>
+
+            <div class="col mb-3">
+                <label asp-for="EndTime" class="form-label">End Time</label>
+                <input asp-for="EndTime"
+                       type="time"
+                       class="form-control" />
+                <span asp-validation-for="EndTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Room" class="form-label">Room</label>
+            <input asp-for="Room" class="form-control" />
+            <span asp-validation-for="Room" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Create
+        </button>
+
+        <a asp-action="ClassSchedules"
+           class="btn btn-outline-secondary">
+            Cancel
+        </a>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

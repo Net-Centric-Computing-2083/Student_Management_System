@@ -1,0 +1,68 @@
+@model List<StudentManagementSystem.Models.Fee>
+
+@{
+    ViewData["Title"] = "Fees & Payments";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="fw-bold mb-0">Fees &amp; Payments</h1>
+        <a asp-action="CreateFee" class="btn btn-primary">+ New Fee Record</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-auto">
+            <select name="studentId" asp-items="ViewBag.Students" class="form-select" onchange="this.form.submit()">
+                <option value="">All Students</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="semesterId" asp-items="ViewBag.Semesters" class="form-select" onchange="this.form.submit()">
+                <option value="">All Semesters</option>
+            </select>
+        </div>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No fee records found.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Student</th>
+                        <th>Semester</th>
+                        <th>Total Fee</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Due Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in Model)
+                    {
+                        <tr>
+                            <td>@f.Student?.Name</td>
+                            <td>@f.Semester?.SemesterName (@f.Semester?.AcademicYear)</td>
+                            <td>@f.TotalAmount.ToString("N2")</td>
+                            <td>@f.PaidAmount.ToString("N2")</td>
+                            <td>
+                                <span class="@(f.RemainingBalance > 0 ? "text-danger fw-semibold" : "text-success")">
+                                    @f.RemainingBalance.ToString("N2")
+                                </span>
+                            </td>
+                            <td>@f.DueDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a asp-action="FeeDetails" asp-route-id="@f.FeeId" class="btn btn-sm btn-outline-primary">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

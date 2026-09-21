@@ -1,0 +1,52 @@
+@model StudentManagementSystem.Models.ContactMessage
+
+@{
+    ViewData["Title"] = "Message";
+}
+
+<div class="container mt-4">
+    <a asp-action="Messages" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Messages</a>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-header">
+            <strong>@Model.Subject</strong>
+            <span class="badge @(Model.Status == "New" ? "bg-warning text-dark" : "bg-success") float-end">@Model.Status</span>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-1">
+                From: @Model.Student?.Name
+                @if (Model.Course != null)
+                {
+                    <span> &middot; @Model.Course.CourseName</span>
+                }
+            </p>
+            <p class="text-muted small">Sent @Model.SentDate.ToString("MMM dd, yyyy h:mm tt")</p>
+            <p style="white-space: pre-wrap;">@Model.MessageText</p>
+        </div>
+    </div>
+
+    @foreach (var reply in Model.Replies.OrderBy(r => r.SentDate))
+    {
+        <div class="card shadow-sm mb-3 @(reply.SenderRole == "Teacher" ? "border-primary" : "")">
+            <div class="card-header">
+                <strong>@(reply.SenderRole == "Teacher" ? "You" : Model.Student?.Name)</strong>
+                <span class="text-muted small float-end">@reply.SentDate.ToString("MMM dd, yyyy h:mm tt")</span>
+            </div>
+            <div class="card-body">
+                <p style="white-space: pre-wrap;" class="mb-0">@reply.MessageText</p>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-header fw-bold">Reply</div>
+        <div class="card-body">
+            <form asp-action="Reply" asp-route-id="@Model.ContactMessageId" method="post">
+                <div class="mb-3">
+                    <textarea name="ReplyText" class="form-control" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Reply</button>
+            </form>
+        </div>
+    </div>
+</div>

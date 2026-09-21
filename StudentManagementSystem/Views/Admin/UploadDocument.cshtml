@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "Upload Document";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Upload Document</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form asp-action="UploadDocument" method="post" enctype="multipart/form-data" style="max-width:600px;">
+        <div class="mb-3">
+            <label class="form-label">Student</label>
+            <select name="StudentId" asp-items="ViewBag.Students" class="form-select">
+                <option value="">-- Select a student --</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input name="Title" type="text" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Document Type</label>
+            <select name="DocumentType" class="form-select">
+                <option value="Certificate">Certificate</option>
+                <option value="Transcript">Transcript</option>
+                <option value="ID Card">ID Card</option>
+                <option value="Recommendation Letter">Recommendation Letter</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">File</label>
+            <input name="DocumentFile" type="file" class="form-control" required />
+            <div class="form-text">PDF, Word, JPG, or PNG. Max 10&nbsp;MB.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Upload</button>
+        <a asp-action="Documents" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

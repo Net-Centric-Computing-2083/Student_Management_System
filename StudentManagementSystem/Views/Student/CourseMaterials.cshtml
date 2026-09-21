@@ -1,0 +1,49 @@
+@model List<StudentManagementSystem.Models.CourseMaterial>
+
+@{
+    var course = ViewBag.Course as StudentManagementSystem.Models.Course;
+    ViewData["Title"] = "Course Materials";
+}
+
+<div class="container mt-4">
+    <a asp-action="Courses" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to My Courses</a>
+
+    <h1 class="fw-bold">Course Materials</h1>
+    <p class="text-muted">@course?.CourseName (@course?.CourseCode)</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No materials have been uploaded for this course yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Uploaded By</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var m in Model)
+                    {
+                        <tr>
+                            <td>@m.Title</td>
+                            <td>@m.Description</td>
+                            <td>@m.Teacher?.Name</td>
+                            <td>@m.UploadedDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <a asp-action="DownloadCourseMaterial" asp-route-id="@m.CourseMaterialId"
+                                   class="btn btn-sm btn-outline-primary">Download</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

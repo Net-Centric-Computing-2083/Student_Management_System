@@ -1,0 +1,51 @@
+@model StudentManagementSystem.Models.Assignment
+
+@{
+    ViewData["Title"] = "New Assignment";
+    var courses = ViewBag.Courses as List<StudentManagementSystem.Models.Course> ?? new();
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">New Assignment</h1>
+
+    <form asp-action="Create" method="post" style="max-width:600px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Course</label>
+            <select asp-for="CourseId" class="form-select">
+                <option value="">-- Select a course --</option>
+                @foreach (var c in courses)
+                {
+                    <option value="@c.CourseId">@c.CourseName</option>
+                }
+            </select>
+            <span asp-validation-for="CourseId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Due Date</label>
+            <input asp-for="DueDate" type="datetime-local" class="form-control" />
+            <span asp-validation-for="DueDate" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Assignment</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

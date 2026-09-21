@@ -1,0 +1,101 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "New Message";
+
+    var courseTeachers =
+        ViewBag.CourseTeachers as List<SelectListItem>
+        ?? new List<SelectListItem>();
+}
+
+<div class="container mt-4">
+
+    <h1 class="fw-bold">Contact a Teacher</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    @if (!courseTeachers.Any())
+    {
+        <div class="alert alert-warning mt-3">
+            No teachers are currently associated with your enrolled courses.
+            Please check back once your class schedule is published.
+        </div>
+    }
+    else
+    {
+        <form asp-action="SendMessage"
+              method="post"
+              class="mt-3"
+              style="max-width:600px;">
+
+            <div class="mb-3">
+                <label class="form-label">
+                    Teacher / Course
+                </label>
+
+                <select name="TeacherCourse"
+                        class="form-select"
+                        required>
+
+                    <option value="">
+                        -- Select a teacher --
+                    </option>
+
+                    @foreach (var item in courseTeachers)
+                    {
+                        <option value="@item.Value">
+                            @item.Text
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="Subject"
+                       class="form-label">
+                    Subject
+                </label>
+
+                <input name="Subject"
+                       id="Subject"
+                       class="form-control"
+                       maxlength="150"
+                       required />
+            </div>
+
+            <div class="mb-3">
+                <label for="MessageText"
+                       class="form-label">
+                    Message
+                </label>
+
+                <textarea name="MessageText"
+                          id="MessageText"
+                          class="form-control"
+                          rows="5"
+                          maxlength="2000"
+                          required></textarea>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary">
+                Send Message
+            </button>
+
+            <a asp-action="ContactTeacher"
+               class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+        </form>
+    }
+
+</div>

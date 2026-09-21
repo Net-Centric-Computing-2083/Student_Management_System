@@ -1,0 +1,53 @@
+@model StudentManagementSystem.Models.Teacher
+
+@{
+    ViewData["Title"] = "Add Teacher";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Add Teacher</h1>
+
+    <form asp-action="CreateTeacher" method="post" style="max-width:600px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Email (also used as login)</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Department</label>
+            <select asp-for="DepartmentId" asp-items="ViewBag.DepartmentId" class="form-select">
+                <option value="">-- Select a department --</option>
+            </select>
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input name="password" type="password" class="form-control" />
+            <span class="text-danger">@ViewData.ModelState["password"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+            <div class="form-text">At least 6 characters, with an uppercase letter, a lowercase letter, and a digit.</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Teacher</button>
+        <a asp-action="Teachers" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

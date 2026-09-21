@@ -1,0 +1,42 @@
+@model List<StudentManagementSystem.Models.ClassSchedule>
+
+@{
+    ViewData["Title"] = "Class Schedule";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">My Class Schedule</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have no scheduled classes yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Course</th>
+                        <th>Semester</th>
+                        <th>Room</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cs in Model)
+                    {
+                        <tr>
+                            <td>@cs.DayOfWeek</td>
+                            <td>@cs.StartTime.ToString(@"hh\:mm") - @cs.EndTime.ToString(@"hh\:mm")</td>
+                            <td>@cs.Course?.CourseName</td>
+                            <td>@cs.Semester?.SemesterName (@cs.Semester?.AcademicYear)</td>
+                            <td>@cs.Room</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

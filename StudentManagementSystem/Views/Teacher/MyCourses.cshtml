@@ -1,0 +1,53 @@
+@model List<StudentManagementSystem.Models.ClassSchedule>
+
+@{
+    ViewData["Title"] = "My Courses";
+    var studentCounts = ViewBag.StudentCounts as Dictionary<int, int> ?? new();
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">My Courses</h1>
+    <p class="text-muted">Courses assigned to you via the class schedule.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You have not been assigned to any courses yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Course</th>
+                        <th>Code</th>
+                        <th>Semester</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Room</th>
+                        <th>Students</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cs in Model)
+                    {
+                        <tr>
+                            <td>@cs.Course?.CourseName</td>
+                            <td>@cs.Course?.CourseCode</td>
+                            <td>@cs.Semester?.SemesterName (@cs.Semester?.AcademicYear)</td>
+                            <td>@cs.DayOfWeek</td>
+                            <td>@cs.StartTime.ToString(@"hh\:mm") - @cs.EndTime.ToString(@"hh\:mm")</td>
+                            <td>@cs.Room</td>
+                            <td>@(studentCounts.TryGetValue(cs.CourseId, out var count) ? count : 0)</td>
+                            <td>
+                                <a asp-action="MyStudents" asp-route-courseId="@cs.CourseId"
+                                   class="btn btn-sm btn-outline-primary">View Students</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

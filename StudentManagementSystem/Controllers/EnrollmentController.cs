@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
@@ -6,189 +7,219 @@ using StudentManagementSystem.Models;
 
 namespace StudentManagementSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Teacher")]
     public class EnrollmentController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public EnrollmentController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        public EnrollmentController(ApplicationDbContext context) => _context = context;
 
-        // GET: Enrollment
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string? searchString,
+            int? semesterId,
+            string? sortOrder,
+            int page = 1)
         {
-            var enrollments = await _context.Enrollments
+            const int pageSize = 10;
+            page = Math.Max(page, 1);
+
+            var enrollments = _context.Enrollments
                 .Include(e => e.Student)
                 .Include(e => e.Course)
-                .ToListAsync();
+                .Include(e => e.Semester)
+                .AsNoTracking()
+                .AsQueryable();
 
-            return View(enrollments);
+            if (!string.IsNullOrWhiteSpace(searchString))
+            {
+                searchString = searchString.Trim();
+                enrollments = enrollments.Where(e =>
+                    (e.Student!.Name ?? "").Contains(searchString) ||
+                    (e.Student.RegistrationNumber ?? "").Contains(searchString) ||
+                    (e.Course!.CourseName ?? "").Contains(searchString) ||
+                    (e.Course.CourseCode ?? "").Contains(searchString));
+            }
+
+            if (semesterId.HasValue)
+                enrollments = enrollments.Where(e => e.SemesterId == semesterId.Value);
+
+            enrollments = sortOrder switch
+            {
+                "date_desc" => enrollments.OrderByDescending(e => e.EnrollmentDate),
+                "student" => enrollments.OrderBy(e => e.Student!.Name),
+                "course" => enrollments.OrderBy(e => e.Course!.CourseName),
+                _ => enrollments.OrderByDescending(e => e.EnrollmentDate)
+            };
+
+            var total = await enrollments.CountAsync();
+            var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+            if (totalPages > 0 && page > totalPages) page = totalPages;
+
+            var list = await enrollments.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewData["CurrentSearch"] = searchString;
+            ViewData["CurrentSemester"] = semesterId;
+            ViewData["CurrentSort"] = sortOrder;
+            ViewBag.Semesters = new SelectList(
+                await _context.Semesters.OrderByDescending(s => s.SemesterId).ToListAsync(),
+                "SemesterId", "SemesterName", semesterId);
+
+            return View(list);
         }
 
-        // GET: Enrollment/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Student)
                 .Include(e => e.Course)
+                .Include(e => e.Semester)
                 .FirstOrDefaultAsync(e => e.EnrollmentId == id);
 
-            if (enrollment == null)
-                return NotFound();
-
-            return View(enrollment);
+            return enrollment == null ? NotFound() : View(enrollment);
         }
 
-        // GET: Enrollment/Create
-        public IActionResult Create()
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create()
         {
-            ViewData["StudentId"] = new SelectList(
-                _context.Students, "StudentId", "Name");
-
-            ViewData["CourseId"] = new SelectList(
-                _context.Courses, "CourseId", "CourseName");
-
+            await LoadDropdownsAsync();
             return View();
         }
 
-        // POST: Enrollment/Create
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Enrollment enrollment)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(enrollment);
-                await _context.SaveChangesAsync();
+            await ValidateEnrollmentAsync(enrollment);
 
-                return RedirectToAction(nameof(Index));
+            if (!ModelState.IsValid)
+            {
+                await LoadDropdownsAsync(enrollment.StudentId, enrollment.CourseId, enrollment.SemesterId);
+                return View(enrollment);
             }
 
-            ViewData["StudentId"] = new SelectList(
-                _context.Students,
-                "StudentId",
-                "Name",
-                enrollment.StudentId);
-
-            ViewData["CourseId"] = new SelectList(
-                _context.Courses,
-                "CourseId",
-                "CourseName",
-                enrollment.CourseId);
-
-            return View(enrollment);
+            _context.Enrollments.Add(enrollment);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Enrollment created successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Enrollment/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-                return NotFound();
-
+            if (id == null) return NotFound();
             var enrollment = await _context.Enrollments.FindAsync(id);
+            if (enrollment == null) return NotFound();
 
-            if (enrollment == null)
-                return NotFound();
-
-            ViewData["StudentId"] = new SelectList(
-                _context.Students,
-                "StudentId",
-                "Name",
-                enrollment.StudentId);
-
-            ViewData["CourseId"] = new SelectList(
-                _context.Courses,
-                "CourseId",
-                "CourseName",
-                enrollment.CourseId);
-
+            await LoadDropdownsAsync(enrollment.StudentId, enrollment.CourseId, enrollment.SemesterId);
             return View(enrollment);
         }
 
-        // POST: Enrollment/Edit/5
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(
-            int id,
-            Enrollment enrollment)
+        public async Task<IActionResult> Edit(int id, Enrollment enrollment)
         {
-            if (id != enrollment.EnrollmentId)
-                return NotFound();
+            if (id != enrollment.EnrollmentId) return NotFound();
 
-            if (ModelState.IsValid)
+            await ValidateEnrollmentAsync(enrollment, enrollment.EnrollmentId);
+
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(enrollment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EnrollmentExists(enrollment.EnrollmentId))
-                        return NotFound();
-
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
+                await LoadDropdownsAsync(enrollment.StudentId, enrollment.CourseId, enrollment.SemesterId);
+                return View(enrollment);
             }
 
-            ViewData["StudentId"] = new SelectList(
-                _context.Students,
-                "StudentId",
-                "Name",
-                enrollment.StudentId);
+            try
+            {
+                _context.Update(enrollment);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await _context.Enrollments.AnyAsync(e => e.EnrollmentId == id))
+                    return NotFound();
+                throw;
+            }
 
-            ViewData["CourseId"] = new SelectList(
-                _context.Courses,
-                "CourseId",
-                "CourseName",
-                enrollment.CourseId);
-
-            return View(enrollment);
+            TempData["SuccessMessage"] = "Enrollment updated successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: Enrollment/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-                return NotFound();
+            if (id == null) return NotFound();
 
             var enrollment = await _context.Enrollments
                 .Include(e => e.Student)
                 .Include(e => e.Course)
+                .Include(e => e.Semester)
                 .FirstOrDefaultAsync(e => e.EnrollmentId == id);
 
-            if (enrollment == null)
-                return NotFound();
-
-            return View(enrollment);
+            return enrollment == null ? NotFound() : View(enrollment);
         }
 
-        // POST: Enrollment/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var enrollment = await _context.Enrollments.FindAsync(id);
+            if (enrollment == null) return NotFound();
 
-            if (enrollment != null)
-            {
-                _context.Enrollments.Remove(enrollment);
-                await _context.SaveChangesAsync();
-            }
-
+            _context.Enrollments.Remove(enrollment);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Enrollment deleted successfully.";
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EnrollmentExists(int id)
+        private async Task ValidateEnrollmentAsync(Enrollment enrollment, int? excludeId = null)
         {
-            return _context.Enrollments
-                .Any(e => e.EnrollmentId == id);
+            if (!await _context.Students.AnyAsync(s => s.StudentId == enrollment.StudentId))
+                ModelState.AddModelError(nameof(Enrollment.StudentId), "Select a valid student.");
+
+            if (!await _context.Courses.AnyAsync(c => c.CourseId == enrollment.CourseId))
+                ModelState.AddModelError(nameof(Enrollment.CourseId), "Select a valid course.");
+
+            if (!await _context.Semesters.AnyAsync(s => s.SemesterId == enrollment.SemesterId))
+                ModelState.AddModelError(nameof(Enrollment.SemesterId), "Select a valid semester.");
+
+            if (await _context.Enrollments.AnyAsync(e =>
+                e.StudentId == enrollment.StudentId &&
+                e.CourseId == enrollment.CourseId &&
+                e.SemesterId == enrollment.SemesterId &&
+                e.EnrollmentId != excludeId))
+            {
+                ModelState.AddModelError("", "This student is already enrolled in this course for the selected semester.");
+            }
+        }
+
+        private async Task LoadDropdownsAsync(
+            int? studentId = null,
+            int? courseId = null,
+            int? semesterId = null)
+        {
+            ViewData["StudentId"] = new SelectList(
+                await _context.Students.OrderBy(s => s.Name).ToListAsync(),
+                "StudentId", "Name", studentId);
+
+            ViewData["CourseId"] = new SelectList(
+                await _context.Courses.OrderBy(c => c.CourseName).ToListAsync(),
+                "CourseId", "CourseName", courseId);
+
+            ViewData["SemesterId"] = new SelectList(
+                await _context.Semesters.OrderByDescending(s => s.SemesterId)
+                    .Select(s => new
+                    {
+                        s.SemesterId,
+                        Display = s.AcademicYear + " - " + s.SemesterName
+                    }).ToListAsync(),
+                "SemesterId", "Display", semesterId);
         }
     }
 }

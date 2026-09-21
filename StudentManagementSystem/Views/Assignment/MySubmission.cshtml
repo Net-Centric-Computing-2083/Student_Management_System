@@ -1,0 +1,37 @@
+@model StudentManagementSystem.Models.AssignmentSubmission
+
+@{
+    ViewData["Title"] = "My Submission";
+}
+
+<div class="container mt-4">
+    <a asp-action="StudentDetails" asp-route-id="@Model.AssignmentId" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Assignment</a>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4 class="mb-0">@Model.Assignment?.Title</h4>
+            <div class="text-muted small">@Model.Assignment?.Course?.CourseName</div>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Submitted @Model.SubmittedDate.ToString("MMM dd, yyyy h:mm tt")</p>
+            <p style="white-space: pre-wrap;">@Model.SubmissionText</p>
+
+            <hr />
+
+            @if (Model.Marks.HasValue)
+            {
+                <h5>Grade</h5>
+                <p class="fs-4 fw-bold">@Model.Marks.Value.ToString("0.##") / 100</p>
+                @if (!string.IsNullOrWhiteSpace(Model.Feedback))
+                {
+                    <p><strong>Feedback:</strong> @Model.Feedback</p>
+                }
+                <p class="text-muted small">Graded @Model.GradedDate?.ToString("MMM dd, yyyy h:mm tt")</p>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">Your teacher hasn't graded this submission yet.</div>
+            }
+        </div>
+    </div>
+</div>

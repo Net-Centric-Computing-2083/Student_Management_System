@@ -8,30 +8,60 @@ namespace StudentManagementSystem.Models
         [Key]
         public int ResultId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Student is required.")]
         public int StudentId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Course is required.")]
         public int CourseId { get; set; }
 
-        [Required]
-        [Range(0, 100, ErrorMessage = "Marks must be between 0 and 100.")]
-        public decimal Marks { get; set; }
+        [Required(ErrorMessage = "Internal marks are required.")]
+        [Range(0, 20)]
+        [Display(Name = "Internal Marks")]
+        public decimal InternalMarks { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Practical marks are required.")]
+        [Range(0, 20)]
+        [Display(Name = "Practical Marks")]
+        public decimal PracticalMarks { get; set; }
+
+        [Required(ErrorMessage = "Final marks are required.")]
+        [Range(0, 60)]
+        [Display(Name = "Final Marks")]
+        public decimal FinalMarks { get; set; }
+
+        [Display(Name = "Total Marks")]
+        public decimal TotalMarks { get; set; }
+
         [StringLength(2)]
         public string Grade { get; set; } = string.Empty;
 
-        [Required]
         [DataType(DataType.Date)]
-        public DateTime ResultDate { get; set; } = DateTime.Now;
+        [Display(Name = "Result Date")]
+        public DateTime ResultDate { get; set; } = DateTime.Today;
 
-        // Navigation property to the existing Student model
         [ForeignKey("StudentId")]
         public Student? Student { get; set; }
 
-        // Navigation property to the existing Course model
         [ForeignKey("CourseId")]
         public Course? Course { get; set; }
+
+        [NotMapped]
+        public decimal GPA
+        {
+            get
+            {
+                return Grade switch
+                {
+                    "A+" => 4.0m,
+                    "A" => 3.6m,
+                    "B+" => 3.2m,
+                    "B" => 2.8m,
+                    "C+" => 2.4m,
+                    "C" => 2.0m,
+                    "D" => 1.6m,
+                    _ => 0.0m
+                };
+            }
+        }
     }
 }

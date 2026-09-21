@@ -1,0 +1,63 @@
+@model List<StudentManagementSystem.Models.Enrollment>
+
+@{
+    ViewData["Title"] = "My Students";
+    var courses = ViewBag.Courses as List<StudentManagementSystem.Models.Course> ?? new();
+    int? selectedCourseId = ViewBag.SelectedCourseId as int?;
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">My Students</h1>
+    <p class="text-muted">Students enrolled in your courses.</p>
+
+    <form method="get" class="row g-2 align-items-end mb-3" style="max-width:400px;">
+        <div class="col">
+            <label class="form-label">Filter by Course</label>
+            <select name="courseId" class="form-select" onchange="this.form.submit()">
+                <option value="">All Courses</option>
+                @foreach (var c in courses)
+                {
+                    <option value="@c.CourseId" selected="@(selectedCourseId == c.CourseId)">@c.CourseName</option>
+                }
+            </select>
+        </div>
+    </form>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No students found.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Registration No.</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td>@e.Student?.RegistrationNumber</td>
+                            <td>@e.Student?.Name</td>
+                            <td>@e.Student?.Email</td>
+                            <td>@e.Course?.CourseName</td>
+                            <td><span class="badge bg-secondary">@e.Status</span></td>
+                            <td>
+                                <a asp-action="StudentPerformanceDetails" asp-route-id="@e.StudentId"
+                                   class="btn btn-sm btn-outline-primary">Performance</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

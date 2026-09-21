@@ -1,0 +1,43 @@
+@model StudentManagementSystem.Models.Announcement
+
+@{
+    ViewData["Title"] = "Edit Announcement";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Edit Announcement</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form asp-action="EditAnnouncement" asp-route-id="@Model.AnnouncementId" method="post" style="max-width:600px;">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input name="Title" type="text" class="form-control" value="@Model.Title" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Content</label>
+            <textarea name="Content" class="form-control" rows="6" required>@Model.Content</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Visible To</label>
+            <select name="TargetRole" class="form-select">
+                <option value="All" selected="@(Model.TargetRole == "All")">Everyone</option>
+                <option value="Student" selected="@(Model.TargetRole == "Student")">Students Only</option>
+                <option value="Teacher" selected="@(Model.TargetRole == "Teacher")">Teachers Only</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a asp-action="Announcements" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

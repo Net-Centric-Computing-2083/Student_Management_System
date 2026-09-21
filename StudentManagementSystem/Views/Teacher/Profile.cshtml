@@ -1,0 +1,27 @@
+@model StudentManagementSystem.Models.Teacher
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">My Profile</h1>
+
+    <div class="card shadow-sm mt-3" style="max-width:600px;">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8">@Model.Name</dd>
+
+                <dt class="col-sm-4">Email</dt>
+                <dd class="col-sm-8">@Model.Email</dd>
+
+                <dt class="col-sm-4">Phone</dt>
+                <dd class="col-sm-8">@(Model.Phone ?? "-")</dd>
+
+                <dt class="col-sm-4">Department</dt>
+                <dd class="col-sm-8">@(Model.Department?.DepartmentName ?? "-")</dd>
+            </dl>
+        </div>
+    </div>
+</div>

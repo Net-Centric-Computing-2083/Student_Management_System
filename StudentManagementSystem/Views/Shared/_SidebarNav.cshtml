@@ -1,0 +1,78 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    Func<string, string, string> navClass = (c, a) =>
+        (string.Equals(currentController, c, StringComparison.OrdinalIgnoreCase) &&
+         string.Equals(currentAction, a, StringComparison.OrdinalIgnoreCase))
+            ? "nav-link active" : "nav-link";
+}
+
+<ul class="nav flex-column sidebar-nav">
+    @if (User.IsInRole("Admin"))
+    {
+        <li class="nav-item"><a class="@navClass("Admin", "Index")" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Profile")" asp-controller="Admin" asp-action="Profile">My Profile</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Index")" asp-controller="Student" asp-action="Index">Students</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Teachers")" asp-controller="Admin" asp-action="Teachers">Teachers</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Users")" asp-controller="Admin" asp-action="Users">Users &amp; Roles</a></li>
+        <li class="nav-item"><a class="@navClass("Department", "Index")" asp-controller="Department" asp-action="Index">Departments</a></li>
+        <li class="nav-item"><a class="@navClass("Course", "Index")" asp-controller="Course" asp-action="Index">Courses</a></li>
+        <li class="nav-item"><a class="@navClass("Enrollment", "Index")" asp-controller="Enrollment" asp-action="Index">Enrollments</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "ClassSchedules")" asp-controller="Admin" asp-action="ClassSchedules">Course Assignment</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Assignments")" asp-controller="Admin" asp-action="Assignments">Assignments</a></li>
+        <li class="nav-item"><a class="@navClass("Results", "Index")" asp-controller="Results" asp-action="Index">Results</a></li>
+        <li class="nav-item"><a class="@navClass("Attendance", "Index")" asp-controller="Attendance" asp-action="Index">Attendance</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Announcements")" asp-controller="Admin" asp-action="Announcements">Announcements</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "ClassSchedules")" asp-controller="Admin" asp-action="ClassSchedules">Class Schedule</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Fees")" asp-controller="Admin" asp-action="Fees">Fees / Payments</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Documents")" asp-controller="Admin" asp-action="Documents">Documents</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Notifications")" asp-controller="Admin" asp-action="Notifications">Notifications</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "LeaveRequests")" asp-controller="Admin" asp-action="LeaveRequests">Leave Requests</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Reports")" asp-controller="Admin" asp-action="Reports">Reports &amp; Analytics</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Semesters")" asp-controller="Admin" asp-action="Semesters">System Settings</a></li>
+        <li class="nav-item"><a class="@navClass("Admin", "Security")" asp-controller="Admin" asp-action="Security">Security</a></li>
+    }
+    else if (User.IsInRole("Teacher"))
+    {
+        <li class="nav-item"><a class="@navClass("Teacher", "Index")" asp-controller="Teacher" asp-action="Index">Dashboard</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "Profile")" asp-controller="Teacher" asp-action="Profile">My Profile</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "MyCourses")" asp-controller="Teacher" asp-action="MyCourses">My Courses</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "MyStudents")" asp-controller="Teacher" asp-action="MyStudents">My Students</a></li>
+        <li class="nav-item"><a class="@navClass("Assignment", "Index")" asp-controller="Assignment" asp-action="Index">Assignments</a></li>
+        <li class="nav-item"><a class="@navClass("Assignment", "Index")" asp-controller="Assignment" asp-action="Index">Submissions</a></li>
+        <li class="nav-item"><a class="@navClass("Assignment", "Index")" asp-controller="Assignment" asp-action="Index">Grading</a></li>
+        <li class="nav-item"><a class="@navClass("Results", "Index")" asp-controller="Results" asp-action="Index">Results</a></li>
+        <li class="nav-item"><a class="@navClass("Attendance", "Index")" asp-controller="Attendance" asp-action="Index">Attendance</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "Announcements")" asp-controller="Teacher" asp-action="Announcements">Announcements</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "ClassSchedule")" asp-controller="Teacher" asp-action="ClassSchedule">Class Schedule</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "StudentPerformance")" asp-controller="Teacher" asp-action="StudentPerformance">Student Performance</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "CourseMaterials")" asp-controller="Teacher" asp-action="CourseMaterials">Course Materials</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "Notifications")" asp-controller="Teacher" asp-action="Notifications">Notifications</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "LeaveRequests")" asp-controller="Teacher" asp-action="LeaveRequests">Leave Requests</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "Messages")" asp-controller="Teacher" asp-action="Messages">Contact Students</a></li>
+        <li class="nav-item"><a class="@navClass("Teacher", "Reports")" asp-controller="Teacher" asp-action="Reports">Reports</a></li>
+    }
+    else if (User.IsInRole("Student"))
+    {
+        <li class="nav-item"><a class="@navClass("Student", "Dashboard")" asp-controller="Student" asp-action="Dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Profile")" asp-controller="Student" asp-action="Profile">My Profile</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Courses")" asp-controller="Student" asp-action="Courses">My Courses</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Results")" asp-controller="Student" asp-action="Results">Results</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Attendance")" asp-controller="Student" asp-action="Attendance">Attendance</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Announcements")" asp-controller="Student" asp-action="Announcements">Announcements</a></li>
+        <li class="nav-item"><a class="@navClass("Assignment", "StudentAssignments")" asp-controller="Assignment" asp-action="StudentAssignments">Assignments</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "ClassSchedule")" asp-controller="Student" asp-action="ClassSchedule">Class Schedule</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Fees")" asp-controller="Student" asp-action="Fees">Fees / Payments</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Documents")" asp-controller="Student" asp-action="Documents">Documents</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "Notifications")" asp-controller="Student" asp-action="Notifications">Notifications</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "AcademicProgress")" asp-controller="Student" asp-action="AcademicProgress">Academic Progress</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "LeaveRequests")" asp-controller="Student" asp-action="LeaveRequests">Leave Request</a></li>
+        <li class="nav-item"><a class="@navClass("Student", "ContactTeacher")" asp-controller="Student" asp-action="ContactTeacher">Contact Teacher</a></li>
+    }
+    <li class="nav-item mt-2">
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button type="submit" class="btn btn-link nav-link text-start w-100 p-0 px-3 py-2">Logout</button>
+        </form>
+    </li>
+</ul>

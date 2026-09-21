@@ -1,0 +1,91 @@
+@model List<StudentManagementSystem.ViewModels.AdminUserRowViewModel>
+
+@{
+    ViewData["Title"] = "Users & Roles";
+    var allRoles = ViewBag.AllRoles as List<string> ?? new();
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Users &amp; Roles</h1>
+    <p class="text-muted">Manage login accounts, roles, and active status.</p>
+
+    <form method="get" class="row g-2 mb-3" style="max-width:400px;">
+        <div class="col">
+            <input type="text" name="searchString" value="@ViewData["CurrentSearch"]"
+                   class="form-control" placeholder="Search by name or email" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Email</th>
+                    <th>Full Name</th>
+                    <th>Roles</th>
+                    <th>Status</th>
+                    <th>Manage Roles</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    <tr>
+                        <td>@row.User.Email</td>
+                        <td>@row.User.FullName</td>
+                        <td>
+                            @foreach (var r in row.Roles)
+                            {
+                                <span class="badge bg-secondary me-1">@r</span>
+                                <form asp-action="RemoveRole" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@row.User.Id" />
+                                    <input type="hidden" name="role" value="@r" />
+                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0" title="Remove role"
+                                            onclick="return confirm('Remove @r role from @row.User.Email?');">&times;</button>
+                                </form>
+                            }
+                        </td>
+                        <td>
+                            @if (row.IsLockedOut)
+                            {
+                                <span class="badge bg-danger">Deactivated</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                        </td>
+                        <td>
+                            <form asp-action="AssignRole" method="post" class="d-flex gap-1">
+                                <input type="hidden" name="id" value="@row.User.Id" />
+                                <select name="role" class="form-select form-select-sm" style="width:120px;">
+                                    @foreach (var r in allRoles)
+                                    {
+                                        <option value="@r">@r</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Add</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form asp-action="ToggleUserActive" asp-route-id="@row.User.Id" method="post">
+                                @if (row.IsLockedOut)
+                                {
+                                    <button type="submit" class="btn btn-sm btn-success">Activate</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Deactivate</button>
+                                }
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

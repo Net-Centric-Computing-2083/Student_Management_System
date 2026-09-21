@@ -1,0 +1,52 @@
+@model List<StudentManagementSystem.Models.ClassSchedule>
+
+@{
+    ViewData["Title"] = "Class Schedule";
+    var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Class Schedule</h1>
+    <p class="text-muted">Your weekly timetable, view-only.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">No class schedule has been published for your courses yet.</div>
+    }
+    else
+    {
+        @foreach (var day in days)
+        {
+            var dayEntries = Model.Where(s => s.DayOfWeek == day).OrderBy(s => s.StartTime).ToList();
+            if (dayEntries.Any())
+            {
+                <h5 class="mt-4">@day</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Time</th>
+                                <th>Course</th>
+                                <th>Teacher</th>
+                                <th>Room</th>
+                                <th>Semester</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var s in dayEntries)
+                            {
+                                <tr>
+                                    <td>@s.StartTime.ToString(@"hh\:mm") - @s.EndTime.ToString(@"hh\:mm")</td>
+                                    <td>@s.Course?.CourseName</td>
+                                    <td>@s.Teacher?.Name</td>
+                                    <td>@s.Room</td>
+                                    <td>@s.Semester?.SemesterName</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    }
+</div>

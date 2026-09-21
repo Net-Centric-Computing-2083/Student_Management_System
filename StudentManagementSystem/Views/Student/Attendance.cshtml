@@ -1,0 +1,26 @@
+@model IEnumerable<StudentManagementSystem.Models.Attendance>
+@{ ViewData["Title"] = "My Attendance"; var records = Model.ToList(); var total = records.Count; var attended = records.Count(a => a.Status == "Present" || a.Status == "Late"); var percentage = total == 0 ? 0 : attended * 100.0 / total; }
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div><h2>My Attendance</h2><p class="text-muted">Only attendance belonging to your logged-in student profile is shown.</p></div>
+        <div class="text-end"><strong>@percentage.ToString("0.0")%</strong><br /><small class="text-muted">Attendance</small></div>
+    </div>
+    @if (!records.Any())
+    {
+        <div class="alert alert-info">No attendance records are available yet.</div>
+    }
+    else
+    {
+        <div class="table-responsive"><table class="table table-hover">
+            <thead class="table-dark"><tr><th>Date</th><th>Course</th><th>Semester</th><th>Status</th></tr></thead>
+            <tbody>
+            @foreach (var item in records)
+            {
+                <tr><td>@item.AttendanceDate.ToString("yyyy-MM-dd")</td><td>@item.Course?.CourseName</td><td>@item.Semester?.AcademicYear - @item.Semester?.SemesterName</td><td><span class="badge @(item.Status == "Present" ? "bg-success" : item.Status == "Late" ? "bg-warning text-dark" : "bg-danger")">@item.Status</span></td></tr>
+            }
+            </tbody>
+        </table></div>
+    }
+    <a asp-action="Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+</div>

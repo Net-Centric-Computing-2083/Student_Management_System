@@ -1,0 +1,168 @@
+@model StudentManagementSystem.ViewModels.StudentDashboardViewModel
+
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container mt-4">
+
+    <h1 class="fw-bold">Welcome, @Model.Student.Name</h1>
+    <p class="lead text-muted">Here's a snapshot of your academic activity.</p>
+
+    <!-- STAT CARDS -->
+    <div class="row g-3 mt-2">
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Enrolled Courses</div>
+                    <div class="fs-3 fw-bold">@Model.TotalCourses</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Overall GPA</div>
+                    <div class="fs-3 fw-bold">@Model.OverallGPA.ToString("0.00")</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Attendance</div>
+                    <div class="fs-3 fw-bold">@Model.AttendancePercentage.ToString("0.0")%</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <div class="text-muted small">Pending Assignments</div>
+                    <div class="fs-3 fw-bold">@Model.PendingAssignments</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+
+        <!-- UPCOMING DEADLINES -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Upcoming Deadlines</div>
+                <div class="card-body">
+                    @if (!Model.UpcomingDeadlines.Any())
+                    {
+                        <p class="text-muted mb-0">No upcoming deadlines. You're all caught up.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var a in Model.UpcomingDeadlines)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@a.Title</div>
+                                        <div class="text-muted small">@a.Course?.CourseName</div>
+                                    </div>
+                                    <span class="badge bg-warning text-dark">@a.DueDate.ToString("MMM dd, yyyy")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a asp-controller="Assignment" asp-action="StudentAssignments" class="btn btn-sm btn-outline-primary">View All Assignments</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT ANNOUNCEMENTS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Recent Announcements</div>
+                <div class="card-body">
+                    @if (!Model.RecentAnnouncements.Any())
+                    {
+                        <p class="text-muted mb-0">No announcements yet.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var an in Model.RecentAnnouncements)
+                            {
+                                <li class="list-group-item">
+                                    <div class="fw-semibold">@an.Title</div>
+                                    <div class="text-muted small">@an.CreatedDate.ToString("MMM dd, yyyy") &middot; @an.AuthorName</div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Announcements" class="btn btn-sm btn-outline-primary">View All Announcements</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECENT NOTIFICATIONS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">
+                    Notifications
+                    @if (Model.UnreadNotifications > 0)
+                    {
+                        <span class="badge bg-danger ms-1">@Model.UnreadNotifications new</span>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (!Model.RecentNotifications.Any())
+                    {
+                        <p class="text-muted mb-0">No notifications yet.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var n in Model.RecentNotifications)
+                            {
+                                <li class="list-group-item @(n.IsRead ? "" : "fw-semibold")">
+                                    @n.Title
+                                    <div class="text-muted small fw-normal">@n.CreatedDate.ToString("MMM dd, yyyy h:mm tt")</div>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="card-footer">
+                    <a asp-action="Notifications" class="btn btn-sm btn-outline-primary">View All Notifications</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK LINKS -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header fw-bold">Quick Links</div>
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <a asp-action="Profile" class="btn btn-sm btn-outline-secondary">My Profile</a>
+                    <a asp-action="Courses" class="btn btn-sm btn-outline-secondary">My Courses</a>
+                    <a asp-action="Results" class="btn btn-sm btn-outline-secondary">Results</a>
+                    <a asp-action="Attendance" class="btn btn-sm btn-outline-secondary">Attendance</a>
+                    <a asp-action="AcademicProgress" class="btn btn-sm btn-outline-secondary">Academic Progress</a>
+                    <a asp-action="ClassSchedule" class="btn btn-sm btn-outline-secondary">Class Schedule</a>
+                    <a asp-action="Fees" class="btn btn-sm btn-outline-secondary">Fees / Payments</a>
+                    <a asp-action="Documents" class="btn btn-sm btn-outline-secondary">Documents</a>
+                    <a asp-action="LeaveRequests" class="btn btn-sm btn-outline-secondary">Leave Requests</a>
+                    <a asp-action="ContactTeacher" class="btn btn-sm btn-outline-secondary">Contact Teacher</a>
+                    @if (Model.PendingLeaveRequests > 0)
+                    {
+                        <span class="badge bg-info align-self-center">@Model.PendingLeaveRequests pending leave request(s)</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

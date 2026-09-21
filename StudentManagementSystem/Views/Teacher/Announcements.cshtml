@@ -1,0 +1,34 @@
+@model List<StudentManagementSystem.Models.Announcement>
+
+@{
+    ViewData["Title"] = "Course Announcements";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h1 class="fw-bold">Course Announcements</h1>
+        <a asp-action="CreateAnnouncement" class="btn btn-primary">+ New Announcement</a>
+    </div>
+    <p class="text-muted">Announcements you've posted for your courses.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">You haven't posted any announcements yet.</div>
+    }
+    else
+    {
+        <div class="list-group">
+            @foreach (var a in Model)
+            {
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@a.Title</h5>
+                        <small class="text-muted">@a.CreatedDate.ToString("MMM dd, yyyy")</small>
+                    </div>
+                    <p class="mb-1">@a.Content</p>
+                    <small class="text-muted">@a.Course?.CourseName</small>
+                </div>
+            }
+        </div>
+    }
+</div>

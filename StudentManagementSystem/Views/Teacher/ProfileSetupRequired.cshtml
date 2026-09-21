@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Profile Setup Required";
+}
+<div class="container mt-4">
+    <div class="alert alert-warning">
+        <h4>Teacher profile not found</h4>
+        <p>Your login account is not currently linked to a teacher profile.</p>
+        <p>Please ask an administrator to create/link your teacher record using the same email address, then sign in again.</p>
+    </div>
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button class="btn btn-secondary">Logout</button>
+    </form>
+</div>

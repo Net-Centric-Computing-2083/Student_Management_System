@@ -1,0 +1,44 @@
+@model List<StudentManagementSystem.Models.ContactMessage>
+
+@{
+    ViewData["Title"] = "Contact Students";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">Contact Students</h1>
+    <p class="text-muted">Messages from students in your courses.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info mt-3">No messages yet.</div>
+    }
+    else
+    {
+        <div class="list-group mt-3">
+            @foreach (var m in Model)
+            {
+                <a asp-action="MessageThread" asp-route-id="@m.ContactMessageId"
+                   class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">@m.Subject</h6>
+                        <small class="text-muted">@m.SentDate.ToString("MMM dd, yyyy")</small>
+                    </div>
+                    <p class="mb-1 text-truncate">@m.MessageText</p>
+                    <small class="text-muted">
+                        From @m.Student?.Name
+                        @if (m.Course != null)
+                        {
+                            <span> &middot; @m.Course.CourseName</span>
+                        }
+                        &middot;
+                        <span class="badge @(m.Status == "New" ? "bg-warning text-dark" : "bg-success")">@m.Status</span>
+                        @if (m.Replies.Any())
+                        {
+                            <span class="badge bg-secondary">@m.Replies.Count reply(s)</span>
+                        }
+                    </small>
+                </a>
+            }
+        </div>
+    }
+</div>

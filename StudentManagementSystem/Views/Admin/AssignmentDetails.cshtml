@@ -1,0 +1,46 @@
+@model StudentManagementSystem.Models.Assignment
+
+@{
+    ViewData["Title"] = "Assignment Details";
+}
+
+<div class="container mt-4">
+    <a asp-action="Assignments" class="btn btn-sm btn-outline-secondary mb-3">&laquo; Back to Assignments</a>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h4 class="mb-0">@Model.Title</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-1">Course: @Model.Course?.CourseName</p>
+            <p class="text-muted mb-1">Teacher: @Model.Teacher?.Name</p>
+            <p class="text-muted mb-3">Due: @Model.DueDate.ToString("MMM dd, yyyy h:mm tt")</p>
+            <p style="white-space: pre-wrap;">@Model.Description</p>
+        </div>
+    </div>
+
+    <h5 class="fw-bold">Submissions (@Model.Submissions.Count)</h5>
+    @if (!Model.Submissions.Any())
+    {
+        <p class="text-muted">No submissions yet.</p>
+    }
+    else
+    {
+        <table class="table table-sm">
+            <thead class="table-light">
+                <tr><th>Student</th><th>Submitted</th><th>Status</th><th>Marks</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model.Submissions.OrderByDescending(s => s.SubmittedDate))
+                {
+                    <tr>
+                        <td>@s.Student?.Name</td>
+                        <td>@s.SubmittedDate.ToString("MMM dd, yyyy h:mm tt")</td>
+                        <td>@s.Status</td>
+                        <td>@(s.Marks.HasValue ? s.Marks.Value.ToString("0.##") : "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

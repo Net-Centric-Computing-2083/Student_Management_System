@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "New System Announcement";
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">New System Announcement</h1>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-danger">
+            @foreach (var e in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@e.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form asp-action="CreateAnnouncement" method="post" style="max-width:600px;">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input name="Title" type="text" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Content</label>
+            <textarea name="Content" class="form-control" rows="6" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Visible To</label>
+            <select name="TargetRole" class="form-select">
+                <option value="All">Everyone</option>
+                <option value="Student">Students Only</option>
+                <option value="Teacher">Teachers Only</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Post Announcement</button>
+        <a asp-action="Announcements" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>

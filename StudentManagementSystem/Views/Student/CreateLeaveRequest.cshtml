@@ -1,0 +1,47 @@
+@model StudentManagementSystem.Models.LeaveRequest
+
+@{
+    ViewData["Title"] = "New Leave Request";
+    var courses = ViewBag.Courses as List<StudentManagementSystem.Models.Course> ?? new();
+}
+
+<div class="container mt-4">
+    <h1 class="fw-bold">New Leave Request</h1>
+
+    <form asp-action="CreateLeaveRequest" method="post" class="mt-3" style="max-width:600px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Course (optional)</label>
+            <select asp-for="CourseId" class="form-select">
+                <option value="">-- General leave (Admin review) --</option>
+                @foreach (var c in courses)
+                {
+                    <option value="@c.CourseId">@c.CourseName</option>
+                }
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Start Date</label>
+                <input asp-for="StartDate" type="date" class="form-control" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">End Date</label>
+                <input asp-for="EndDate" type="date" class="form-control" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Reason</label>
+            <textarea asp-for="Reason" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Reason" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+        <a asp-action="LeaveRequests" class="btn btn-outline-secondary">Cancel</a>
+    </form>
+</div>
