@@ -58,6 +58,7 @@ Or open StudentManagementSystem.slnx in Visual Studio and press F5.
 Roles, default semesters, and a seeded Admin account are created automatically on first run.
 
 **Default Admin Account**
+
 Email	admin@studentmanagement.com
 Password	Admin@123
 
@@ -68,5 +69,6 @@ Student: an Admin/Teacher must first create a Student profile. The student then 
 Teacher: created/assigned through the Admin user-management flow — no fixed seeded account exists.
 
 **Known Limitations**
+
 AttendanceController and ResultsController let any Teacher mark attendance/enter results for any course, not just their own.
 Run dotnet build and resolve any errors before deploying — the project has only been statically reviewed.
