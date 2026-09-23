@@ -1,275 +1,46 @@
-# Student Management System
-
-A web-based **Student Management System** developed using **ASP.NET Core MVC**, **Entity Framework Core**, and **SQL Server**. The system is designed to manage student information and academic activities through a centralized and user-friendly platform.
-
-## Technologies Used
-
-* ASP.NET Core MVC
-* C#
-* Entity Framework Core
-* SQL Server
-* Razor Views
-* HTML5
-* CSS3
-* Bootstrap
-* Git & GitHub
-* Visual Studio
-
-## Main Modules
-
-The system is divided into the following modules:
-
-1. Student Registration
-2. Student Profile
-3. Department Management
-4. Course Management
-5. Enrollment Management
-6. Attendance Management
-7. Result Management
-8. Student Search
-9. Dashboard
-
-## Student Module
-
-The Student Module is responsible for managing student registration and student information.
-
-### Features
-
-* Add new students
-* View all registered students
-* View individual student profiles
-* Edit student information
-* Delete students
-* Delete confirmation
-* Search students by:
-
-  * Name
-  * Email
-  * Phone number
-  * Student ID
-* Form validation
-* Nepali mobile number validation
-* Email format validation
-* Date of birth validation
-* Duplicate email prevention
-* Student dashboard
-* Recent students display
-* Student navigation
-
-### Student Information
-
-The Student entity currently contains:
-
-* Student ID
-* Full Name
-* Email Address
-* Phone Number
-* Address
-* Gender
-* Date of Birth
-* Department ID
-
-> Department integration will be completed after the Department module is integrated with the Student module.
-
-## Database
-
-The project uses **SQL Server** with **Entity Framework Core**.
-
-Main database entities include:
-
-* Students
-* Departments
-* Courses
-* Enrollments
-* Attendance
-* Results
-
-## Project Structure
-
-```text
-Student_Management_System
-│
-├── StudentManagementSystem
-│   ├── Controllers
-│   ├── Data
-│   ├── Models
-│   ├── Views
-│   ├── wwwroot
-│   ├── Program.cs
-│   └── appsettings.json
-│
-├── .gitignore
-└── README.md
-```
+Student Management System
 
-## Student Module Structure
+A role-based web application for managing students, teachers, courses, attendance, results, assignments, fees, and communication in an academic institution — built with ASP.NET Core MVC, Entity Framework Core, and SQL Server.
 
-```text
-Controllers
-└── StudentController.cs
+Features
 
-Models
-├── Student.cs
-└── DashboardViewModel.cs
+Admin — manages Departments, Courses, Teachers, Students, Semesters, and Class Schedules; posts system-wide/course announcements; handles Fees & Payments; uploads Documents; sends Notifications; reviews Leave Requests; views dashboard stats/reports; manages Users & Roles.
 
-Data
-└── ApplicationDbContext.cs
+Teacher — views assigned courses and students; marks Attendance; enters Results (auto-calculated grades); creates and grades Assignments; posts course announcements/materials; reviews student leave requests; messages students.
 
-Views
-├── Home
-│   └── Index.cshtml
-│
-├── Student
-│   ├── Index.cshtml
-│   ├── Create.cshtml
-│   ├── Edit.cshtml
-│   ├── Details.cshtml
-│   └── Delete.cshtml
-│
-└── Shared
-    └── _Layout.cshtml
-```
+Student — personal dashboard (GPA, attendance %, pending assignments); views Courses, Class Schedule, Results, Attendance, Fees; submits Assignments and views grades; downloads Documents; submits Leave Requests; contacts Teachers; views Announcements/Notifications.
 
-## Git Branch Structure
+Cross-cutting — role-based auth via ASP.NET Core Identity (Admin/Teacher/Student); automatic notifications on key events (new assignment, grade posted, fee billed, etc.); search/filter/sort/pagination on major lists; anti-forgery protection; users can only access their own records (no ID tampering via URL).
 
-Each team member works on a separate branch.
+Tech Stack Framework: ASP.NET Core MVC (.NET 10) ORM: Entity Framework Core 10 Database: SQL Server Auth: ASP.NET Core Identity Frontend: Razor Views, Bootstrap, jQuery
 
-```text
-master
-│
-├── aakriti-911
-├── member2-department-course
-├── member3-enrollment-attendance
-└── member4-results
-```
+Project Structure StudentManagementSystem/ ├── Controllers/ # MVC controllers ├── Models/ # EF Core entity models ├── ViewModels/ # View-specific models ├── Views/ # Razor views ├── Data/ # DbContext and RoleSeeder ├── Migrations/ # EF Core migrations ├── wwwroot/ # CSS, JS, uploaded files ├── Program.cs # App startup └── appsettings.json # Configuration
 
-### Member 1 — Student Module
+Getting Started
 
-The aakriti-911 branch contains:
+Prerequisites .NET 10 SDK SQL Server (LocalDB, Express, or full instance) Visual Studio 2022+ or the dotnet CLI
 
-* Student Registration
-* Student CRUD
-* Student Profile
-* Student Search
-* Student Validation
-* Dashboard
-* Navigation
-* Student UI
+Setup
+ Clone the repo: 
+    bash git clone cd StudentManagementSystem
+    
+ Update the connection string in appsettings.json: 
+   "ConnectionStrings": { "DefaultConnection": "Server=YOUR_SERVER;Database=StudentManagementDB;Trusted_Connection=True;TrustServerCertificate=True;" }
+    
+ Build and run (migrations apply automatically on startup): 
+    bash dotnet build dotnet run
 
-Other branches contain the remaining modules and will be integrated into the `master` branch after development and testing.
+Or open StudentManagementSystem.slnx in Visual Studio and press F5. Roles, default semesters, and a seeded Admin account are created automatically on first run.
 
-## How to Run the Project
+Default Admin Account
 
-### 1. Clone the repository
+Email admin@studentmanagement.com 
+Password Admin@123
 
-```bash
-git clone <repository-url>
-```
+Testing Other Roles
 
-### 2. Open the project
+Student: an Admin/Teacher must first create a Student profile. The student then self-registers using the same email, registration number, and date of birth as that profile. Teacher: created/assigned through the Admin user-management flow — no fixed seeded account exists.
 
-Open the `.sln` file in Visual Studio.
+Known Limitations
 
-### 3. Configure the database
-
-Update the SQL Server connection string in:
-
-```text
-appsettings.json
-```
-
-### 4. Apply migrations
-
-Open **Package Manager Console** in Visual Studio and run:
-
-```powershell
-Update-Database
-```
-
-### 5. Run the application
-
-Press:
-
-```text
-Ctrl + F5
-```
-
-or:
-
-```text
-F5
-```
-
-## Project Status
-
-### Completed
-
-* Student Registration
-* Student CRUD
-* Student Profile
-* Student Search
-* Student Validation
-* Dashboard
-* Navigation
-* SQL Server & EF Core setup
-
-## Department and Course Management
-
-### Department Management
-
-* Added Department CRUD operations.
-* Added department name and description fields.
-* Added validation for department information.
-* Prevented duplicate department names.
-* Duplicate checking is case-insensitive.
-* Prevented deletion of departments that have students or courses assigned to them.
-* Added Department Details showing associated students and courses.
-
-### Course Management
-
-* Added Course CRUD operations.
-* Added Course Name, Course Code, Credit Hours, and Department fields.
-* Added Department dropdown for course creation and editing.
-* Added validation for course information.
-* Prevented duplicate Course Names.
-* Prevented duplicate Course Codes.
-* Duplicate checking is case-insensitive.
-* Added Course Details displaying the associated department.
-
-### Database Changes
-
-* Added `Department` and `Course` entities.
-* Added relationships between Department and Student.
-* Added relationship between Department and Course.
-* Added EF Core migration for Department and Course management.
-
-### Member 2
-
-**Modules:** Department Management and Course Management
-
-
-### In Progress
-
-* Enrollment
-* Attendance
-* Results
-* Final module integration
-
-## Future Integration
-
-After all modules are completed, the team will:
-
-* Integrate all branches
-* Establish database relationships
-* Perform final migrations
-* Conduct system-wide testing
-* Apply a consistent final UI design
-* Fix integration issues
-* Prepare project documentation
-* Prepare the final demonstration
-
-## Team Project
-
-**Student Management System**
-
-Developed as an academic project using ASP.NET Core MVC and Entity Framework Core.
+AttendanceController and ResultsController let any Teacher mark attendance/enter results for any course, not just their own. Run dotnet build and resolve any errors before deploying — the project has only been statically reviewed.
